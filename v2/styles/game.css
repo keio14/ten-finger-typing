@@ -52,7 +52,10 @@
   100% { opacity: 0; transform: scale(1); }
 }
 
-/* game-over overlay — soft light backdrop (no dark/black screen) */
+/* game-over overlay — soft light backdrop (no dark/black screen).
+   Only shown on game over; .overlay's display must NOT override [hidden],
+   or the blurred wash would sit over the game the whole time. */
+.overlay[hidden] { display: none; }
 .overlay {
   position: absolute; inset: 0;
   background: rgba(255, 255, 255, 0.72);
