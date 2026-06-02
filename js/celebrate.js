@@ -27,8 +27,17 @@ export function confetti(durationMs = 1600) {
   let last = null;
   let elapsed = 0;
   let raf = 0;
+  let cleaned = false;
+
+  function cleanup() {
+    if (cleaned) return;
+    cleaned = true;
+    cancelAnimationFrame(raf);
+    canvas.remove();
+  }
 
   function frame(t) {
+    if (cleaned) return;
     if (last === null) last = t;
     let dt = (t - last) / 1000;
     last = t;
@@ -50,9 +59,11 @@ export function confetti(durationMs = 1600) {
     }
 
     if (elapsed < durationMs) raf = requestAnimationFrame(frame);
-    else { cancelAnimationFrame(raf); canvas.remove(); }
+    else cleanup();
   }
   raf = requestAnimationFrame(frame);
+  // Guaranteed cleanup even if rAF is throttled (e.g. the tab is hidden).
+  setTimeout(cleanup, durationMs + 150);
   return canvas;
 }
 
