@@ -1,0 +1,16 @@
+.keyboard { user-select: none; display: inline-block; padding: 10px; }
+.kb-row { display: flex; justify-content: center; gap: 6px; margin: 4px 0; }
+.kb-key {
+  min-width: 38px; height: 44px; padding: 0 8px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; font: 600 15px "Trebuchet MS", sans-serif;
+  color: #1b2733; box-shadow: 0 2px 0 rgba(0,0,0,0.15);
+  opacity: 0.55; transition: transform .08s, opacity .08s, box-shadow .08s;
+}
+.kb-wide { min-width: 64px; }
+.kb-space { min-width: 260px; }
+.kb-key.next {
+  opacity: 1; transform: translateY(-2px) scale(1.06);
+  outline: 3px solid #1b2733; box-shadow: 0 0 14px rgba(27,39,51,0.5);
+}
+.kb-hint { text-align: center; margin-top: 8px; font: 600 16px "Trebuchet MS", sans-serif; color: #1864ab; min-height: 22px; }
