@@ -23,6 +23,8 @@ export function gameView(host) {
     state = createGame({ pool: practiceKeys(store) });
     screen = "playing";
     lastTime = 0;
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(loop);
   }
 
   function endGame() {
@@ -49,14 +51,13 @@ export function gameView(host) {
     lastTime = t;
     if (dt > 0.1) dt = 0.1;
 
-    if (screen === "playing") {
-      const before = state.lives;
-      update(state, dt);
-      if (state.lives < before) audio.play("life");
-      if (state.status === "over") endGame();
-    }
+    const before = state.lives;
+    update(state, dt);
+    if (state.lives < before) audio.play("life");
+    if (state.status === "over") endGame();
     render();
-    raf = requestAnimationFrame(loop);
+    // Animate only while playing; the static start/over screens are rendered once.
+    if (screen === "playing") raf = requestAnimationFrame(loop);
   }
 
   function render() {
@@ -111,7 +112,7 @@ export function gameView(host) {
   }
 
   window.addEventListener("keydown", onKey);
-  raf = requestAnimationFrame(loop);
+  render(); // draw the start screen once; the loop starts when a game begins
 
   return {
     destroy() {
