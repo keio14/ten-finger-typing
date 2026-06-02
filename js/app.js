@@ -2,6 +2,7 @@
 import { store } from "./storage.js";
 import { audio } from "./audio.js";
 import { practiceView } from "./views/practice.js";
+import { lessonsView } from "./views/lessons.js";
 import { escapeHtml } from "./util.js";
 
 const app = document.getElementById("app");
@@ -20,6 +21,7 @@ function mount(view) {
 
 function router() {
   const path = (location.hash || "#/").slice(1);
+  if (path === "/lessons" || path.startsWith("/lessons/")) { mount(lessonsView); return; }
   const view = routes[path] || homeView;
   mount(view);
 }
@@ -29,8 +31,8 @@ function homeView(host) {
   const name = store.getName();
   host.innerHTML =
     `<h1>Welcome${name ? ", " + escapeHtml(name) : ""}! 👋</h1>` +
-    `<p>This is the foundation build. Try <a href="#/practice">Practice</a> to type with ` +
-    `the on-screen keyboard guide.</p>`;
+    `<p>Start the <a href="#/lessons">Lessons</a> to learn touch typing step by step, ` +
+    `or try <a href="#/practice">Free Practice</a>.</p>`;
 }
 
 function updateGreeting() {
