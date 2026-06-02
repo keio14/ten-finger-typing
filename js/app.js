@@ -3,6 +3,7 @@ import { store } from "./storage.js";
 import { audio } from "./audio.js";
 import { practiceView } from "./views/practice.js";
 import { lessonsView } from "./views/lessons.js";
+import { testsView } from "./views/tests.js";
 import { escapeHtml } from "./util.js";
 
 const app = document.getElementById("app");
@@ -11,6 +12,7 @@ let current = null; // { destroy? }
 const routes = {
   "/": homeView,
   "/practice": practiceView,
+  "/tests": testsView,
 };
 
 function mount(view) {
