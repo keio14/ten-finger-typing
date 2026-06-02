@@ -2,7 +2,7 @@
 import { COURSES, allLessons } from "./curriculum.js";
 import { courseProgress } from "./lessons.js";
 
-const HOME_ROW_IDS = COURSES[0].units.find((u) => u.id === "home").lessons.map((l) => l.id);
+const HOME_ROW_IDS = (COURSES[0].units.find((u) => u.id === "home")?.lessons || []).map((l) => l.id);
 
 function anyLessonDone(store) {
   return allLessons().some((l) => { const p = store.getLesson(l.id); return p && p.completed; });

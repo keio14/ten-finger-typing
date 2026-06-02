@@ -7,7 +7,8 @@ import { syncCertificates } from "../certificate.js";
 import { escapeHtml } from "../util.js";
 
 export function dashboardView(host) {
-  // Bring derived progress up to date on every visit.
+  // Bring derived progress up to date on every visit. Note: a certificate's date is stamped
+  // the first time the dashboard is viewed after the course is completed.
   syncAchievements(store);
   syncCertificates(store, new Date().toISOString());
 

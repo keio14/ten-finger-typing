@@ -9,7 +9,8 @@ export function earnedCourseIds(store) {
     .map((c) => c.id);
 }
 
-// Best WPM and average best-accuracy across a course's completed lessons.
+// Best WPM and average best-accuracy across the course's lessons with a recorded attempt.
+// (Certificates are only minted once a course is fully complete, so this covers every lesson.)
 export function courseBest(store, courseId) {
   const lessons = allLessons().filter((l) => l.courseId === courseId);
   let wpm = 0, accSum = 0, n = 0;
