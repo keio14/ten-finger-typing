@@ -4,16 +4,18 @@
 // completion awards 1–3 stars, saves progress, and unlocks the next lesson.
 
 import { getLesson, nextLesson } from "./curriculum.js";
-import { renderKeyboard, fingerLabel } from "./keyboard.js";
+import { renderKeyboard } from "./keyboard.js";
+import { fingerFor } from "./fingers.js";
 import { accuracyPct, wpm, starsFor, isTypingKey } from "./typing.js";
 import { recordLesson } from "./state.js";
+import { t } from "./i18n.js";
 import * as audio from "./audio.js";
 import { celebrate } from "./celebrate.js";
 
 export function renderLesson(app, id) {
   const lesson = getLesson(id);
   if (!lesson) {
-    app.innerHTML = `<p class="empty">Lesson not found. <a href="#/lessons">Back to lessons</a></p>`;
+    app.innerHTML = `<p class="empty">Lesson not found. <a href="#/lessons">${t("lesson.allLessons")}</a></p>`;
     return;
   }
 
@@ -22,17 +24,17 @@ export function renderLesson(app, id) {
 
   app.innerHTML = `
     <section class="lesson">
-      <a class="back" href="#/lessons">← All lessons</a>
-      <h1>${lesson.title}</h1>
+      <a class="back" href="#/lessons">${t("lesson.back")}</a>
+      <h1>${t("title." + lesson.id)}</h1>
       <p class="lesson-hint" id="finger-hint"></p>
       <div class="typed-line" id="typed-line" aria-label="drill text"></div>
       <div class="stats">
-        <span>✅ Accuracy: <b id="acc">100</b>%</span>
-        <span>⚡ Speed: <b id="wpm">0</b> wpm</span>
+        <span>✅ ${t("lesson.accuracy")}: <b id="acc">100</b>%</span>
+        <span>⚡ ${t("lesson.speed")}: <b id="wpm">0</b> ${t("lesson.wpmUnit")}</span>
         <span>📍 <b id="pos">0</b>/${target.length}</span>
       </div>
       <div id="kb"></div>
-      <p class="tip">Rest your fingers on the home row (F and J have little bumps) and look at the screen, not your hands!</p>
+      <p class="tip">${t("lesson.tip")}</p>
     </section>
   `;
 
@@ -47,7 +49,7 @@ export function renderLesson(app, id) {
   const charEls = [...target].map((ch) => {
     const s = document.createElement("span");
     s.className = "ch";
-    s.textContent = ch === " " ? " " : ch; // visible space
+    s.textContent = ch === " " ? " " : ch; // visible space
     if (ch === " ") s.classList.add("ch-space");
     lineEl.appendChild(s);
     return s;
@@ -67,10 +69,12 @@ export function renderLesson(app, id) {
     const ch = expectedChar();
     charEls.forEach((el, i) => el.classList.toggle("ch-current", i === pos));
     kb.highlight(ch);
-    const label = fingerLabel(ch);
-    hintEl.textContent = ch === " "
-      ? "Next: press the space bar with a thumb"
-      : label ? `Next: “${ch}” — use your ${label}` : "";
+    if (ch === " ") {
+      hintEl.textContent = t("lesson.nextSpace");
+    } else {
+      const f = fingerFor(ch);
+      hintEl.textContent = f ? t("lesson.nextKey", { ch, finger: t("finger." + f.id) }) : "";
+    }
   }
 
   function refreshStats() {
@@ -95,19 +99,19 @@ export function renderLesson(app, id) {
       "afterend",
       `<div class="lesson-done">
         <h2>${"⭐".repeat(stars)}</h2>
-        <p>Nice work! Accuracy ${accuracy}%.</p>
+        <p>${t("lesson.doneMsg", { acc: accuracy })}</p>
         ${next
-          ? `<a class="btn" href="#/lesson/${next.id}">Next lesson →</a>`
-          : `<p>You finished every lesson! 🎉</p>`}
-        <a class="btn-ghost" href="#/lesson/${lesson.id}">Try again</a>
-        <a class="btn-ghost" href="#/lessons">All lessons</a>
+          ? `<a class="btn" href="#/lesson/${next.id}">${t("lesson.next")}</a>`
+          : `<p>${t("lesson.finishedAll")}</p>`}
+        <a class="btn-ghost" href="#/lesson/${lesson.id}">${t("lesson.tryAgain")}</a>
+        <a class="btn-ghost" href="#/lessons">${t("lesson.allLessons")}</a>
       </div>`
     );
   }
 
   function onKey(e) {
     if (done) return;
-    // ignore modifier/navigation keys; only single printable chars + space
+    // only single printable chars + space; ignore modifiers/navigation keys
     if (!isTypingKey(e)) return;
     e.preventDefault();
 

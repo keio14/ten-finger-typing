@@ -1,22 +1,38 @@
-/* game.css — the falling-letters game: HUD, canvas stage, level banner,
+/* game.css — the falling-WORDS game: HUD, canvas stage, level banner,
    and the game-over overlay. */
 
 .game-hud {
-  display: flex; gap: 20px; flex-wrap: wrap; align-items: center;
+  display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
   font-weight: 700; margin-bottom: 12px; font-size: 1.05rem;
 }
 .game-hud b { color: var(--accent); }
+.hud-hearts { font-size: 1.2rem; }
+.hud-pill {
+  background: #fff; border-radius: 999px; padding: 6px 14px;
+  box-shadow: var(--shadow);
+}
 
 .game-stage {
   position: relative;
   width: 640px; max-width: 100%;
   margin: 0 auto;
+  border-radius: 18px;
+  /* lively animated sky behind the transparent canvas */
+  background: linear-gradient(125deg, #dbeafe, #ede9fe, #fce7f3, #dcfce7);
+  background-size: 300% 300%;
+  animation: skyshift 14s ease infinite;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+@keyframes skyshift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 #canvas {
   width: 100%;
-  background: linear-gradient(#eff6ff, #ffffff);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
+  background: transparent; /* lets the animated stage gradient show through */
+  border-radius: 18px;
   display: block;
 }
 

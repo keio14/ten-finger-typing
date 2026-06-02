@@ -4,7 +4,7 @@
 const KEY = "tenfinger.v2";
 
 const DEFAULT_STATE = {
-  settings: { name: "", muted: false },
+  settings: { name: "", muted: false, lang: "en" },
   // lessons keyed by lesson id -> { completed, stars, bestAccuracy }
   lessons: {},
   game: { bestScore: 0, bestLevel: 1 },
@@ -56,6 +56,13 @@ export function setMuted(muted) {
 }
 export function isMuted() {
   return state.settings.muted;
+}
+export function getLang() {
+  return state.settings.lang || "en";
+}
+export function setLang(lang) {
+  state.settings.lang = lang;
+  save();
 }
 
 // --- lessons ---

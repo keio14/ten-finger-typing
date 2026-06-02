@@ -4,6 +4,7 @@
 
 import { LESSONS } from "../curriculum.js";
 import { getLessonProgress } from "../state.js";
+import { t } from "../i18n.js";
 
 // A lesson is unlocked if it's the first one, or the previous is completed.
 function isUnlocked(index) {
@@ -29,19 +30,20 @@ export function renderLessons(app) {
         .map(({ lesson, index }) => {
           const prog = getLessonProgress(lesson.id);
           const unlocked = isUnlocked(index);
+          const title = t("title." + lesson.id);
           const stars = prog.stars
             ? "⭐".repeat(prog.stars) + "☆".repeat(3 - prog.stars)
             : "☆☆☆";
           if (!unlocked) {
-            return `<li class="lesson-item locked" title="Finish the lesson before to unlock">
+            return `<li class="lesson-item locked" title="${t("lessons.locked")}">
                 <span class="lock">🔒</span>
-                <span class="lesson-name">${lesson.title}</span>
+                <span class="lesson-name">${title}</span>
                 <span class="lesson-stars">${stars}</span>
               </li>`;
           }
           return `<li class="lesson-item ${prog.completed ? "completed" : ""}">
               <a href="#/lesson/${lesson.id}">
-                <span class="lesson-name">${lesson.title}</span>
+                <span class="lesson-name">${title}</span>
                 <span class="lesson-keys">${lesson.keys.map((k) => k.toUpperCase()).join(" ")}</span>
                 <span class="lesson-stars">${stars}</span>
               </a>
@@ -49,7 +51,7 @@ export function renderLessons(app) {
         })
         .join("");
       return `<div class="lesson-group">
-          <h2>${g.name}</h2>
+          <h2>${t("group." + g.name)}</h2>
           <ul class="lesson-list">${items}</ul>
         </div>`;
     })
@@ -57,8 +59,8 @@ export function renderLessons(app) {
 
   app.innerHTML = `
     <section class="lessons">
-      <h1>📚 Lessons</h1>
-      <p class="sub">Start at the top. Each lesson unlocks the next one.</p>
+      <h1>${t("lessons.title")}</h1>
+      <p class="sub">${t("lessons.sub")}</p>
       ${groupHtml}
     </section>
   `;

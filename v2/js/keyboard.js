@@ -2,7 +2,7 @@
 // "next key to press", tinted with that key's finger color. This is the
 // visual guide that teaches a beginner where each finger goes.
 
-import { colorFor, fingerFor } from "./fingers.js";
+import { colorFor } from "./fingers.js";
 
 const ROWS = [
   ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
@@ -73,10 +73,4 @@ export function renderKeyboard(container) {
   }
 
   return { highlight, clearHighlight, flash };
-}
-
-// Small helper for views that want to name the finger for a key in text.
-export function fingerLabel(char) {
-  const f = fingerFor(char);
-  return f ? f.label : "";
 }

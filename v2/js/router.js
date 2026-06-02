@@ -52,6 +52,11 @@ function highlightNav(name) {
   });
 }
 
+// Re-render the current route in place (used after a language change).
+export function rerender() {
+  render();
+}
+
 export function startRouter() {
   window.addEventListener("hashchange", render);
   render();
