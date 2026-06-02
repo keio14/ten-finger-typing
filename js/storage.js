@@ -1,0 +1,61 @@
+// js/storage.js — single source of truth for locally-saved state.
+const KEY = "mastertyping.v1";
+
+export const DEFAULT_STATE = {
+  name: null,                 // null = never asked, "" = asked & skipped, "Mia" = provided
+  lessons: {},                // id -> { bestWpm, bestAccuracy, stars, completed }
+  tests: [],                  // { dateISO, durationSec, wpm, accuracy }, newest first
+  certificates: [],           // { courseId, dateISO, wpm, accuracy }
+  achievements: [],           // achievement ids
+  game: { highScore: 0, bestLevel: 1 },
+  settings: { keyboardGuide: true, sound: true },
+};
+
+// Deep-merge defaults under loaded data so new keys always exist.
+function withDefaults(loaded) {
+  const d = structuredClone(DEFAULT_STATE);
+  if (!loaded || typeof loaded !== "object") return d;
+  return {
+    ...d, ...loaded,
+    game: { ...d.game, ...(loaded.game || {}) },
+    settings: { ...d.settings, ...(loaded.settings || {}) },
+    lessons: { ...(loaded.lessons || {}) },
+    tests: Array.isArray(loaded.tests) ? loaded.tests : d.tests,
+    certificates: Array.isArray(loaded.certificates) ? loaded.certificates : d.certificates,
+    achievements: Array.isArray(loaded.achievements) ? loaded.achievements : d.achievements,
+  };
+}
+
+export class Storage {
+  constructor() {
+    this.inMemory = false;
+    let parsed = null;
+    try {
+      const raw = localStorage.getItem(KEY);
+      parsed = raw ? JSON.parse(raw) : null;
+    } catch (_) {
+      parsed = null;                 // corrupt JSON or unavailable storage
+    }
+    this.state = withDefaults(parsed);
+  }
+
+  save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(this.state));
+    } catch (_) {
+      this.inMemory = true;          // private mode / quota — keep state in memory only
+    }
+  }
+
+  getName() { return this.state.name; }
+  setName(name) { this.state.name = name; this.save(); }
+
+  getSettings() { return this.state.settings; }
+  updateSettings(patch) {
+    this.state.settings = { ...this.state.settings, ...patch };
+    this.save();
+  }
+}
+
+// One shared instance for the app (tests construct their own).
+export const store = new Storage();
