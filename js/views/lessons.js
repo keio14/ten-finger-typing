@@ -66,23 +66,28 @@ function playerView(host, id) {
   function finish(stats) {
     const stars = computeStars({ accuracy: stats.accuracy, wpm: stats.wpm }, course.pass);
     store.recordLessonResult(id, { wpm: stats.wpm, accuracy: stats.accuracy, stars });
+    // everCompleted reflects the stored best, so re-practicing a passed lesson
+    // never shows a discouraging message or hides the Next button.
+    const rec = store.getLesson(id);
+    const everCompleted = !!(rec && rec.completed);
     if (stars >= 1) celebrateLesson();
 
     const starHtml = [0, 1, 2].map((i) =>
       `<span class="star${i < stars ? "" : " dim"}">★</span>`).join("");
     const nextId = nextLessonId(id);
     const passed = stars >= 1;
+    const headline = passed ? "Great job!" : everCompleted ? "Nice practice!" : "Keep practicing!";
 
     resultEl.innerHTML =
       `<div class="lesson-result">
-         <h2>${passed ? "Great job!" : "Keep practicing!"}</h2>
+         <h2>${headline}</h2>
          <div class="stars">${starHtml}</div>
          <p><span class="stat">WPM <b>${stats.wpm}</b></span>
             <span class="stat">Accuracy <b>${Math.round(stats.accuracy * 100)}%</b></span></p>
-         ${passed ? "" : `<p>Reach ${Math.round(course.pass.minAccuracy * 100)}% accuracy and ${course.pass.minWpm} WPM to pass.</p>`}
+         ${passed || everCompleted ? "" : `<p>Reach ${Math.round(course.pass.minAccuracy * 100)}% accuracy and ${course.pass.minWpm} WPM to pass.</p>`}
          <div class="actions">
            <button id="retry" class="btn-ghost" type="button">Try again</button>
-           ${passed && nextId ? `<a id="next" class="btn-primary" href="#/lessons/${encodeURIComponent(nextId)}">Next lesson →</a>` : ""}
+           ${everCompleted && nextId ? `<a id="next" class="btn-primary" href="#/lessons/${encodeURIComponent(nextId)}">Next lesson →</a>` : ""}
            <a class="btn-ghost" href="#/lessons">Back to lessons</a>
          </div>
        </div>`;
