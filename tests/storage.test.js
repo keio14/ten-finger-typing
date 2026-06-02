@@ -74,3 +74,35 @@ test("Storage: lesson progress persists across instances", () => {
   const s2 = new Storage();
   assertEqual(s2.getLesson("home-dk").stars, 2);
 });
+
+test("Storage: addTest stores newest-first and getTests returns them", () => {
+  const s = freshStorage();
+  s.addTest({ durationSec: 60, wpm: 20, accuracy: 0.9 });
+  s.addTest({ durationSec: 60, wpm: 30, accuracy: 0.95 });
+  const tests = s.getTests();
+  assertEqual(tests.length, 2);
+  assertEqual(tests[0].wpm, 30); // newest first
+  assert(typeof tests[0].dateISO === "string", "records a date");
+});
+
+test("Storage: bestTest returns the highest-wpm result, or null when empty", () => {
+  const s = freshStorage();
+  assertEqual(s.bestTest(), null);
+  s.addTest({ durationSec: 60, wpm: 20, accuracy: 0.9 });
+  s.addTest({ durationSec: 180, wpm: 45, accuracy: 0.92 });
+  s.addTest({ durationSec: 60, wpm: 33, accuracy: 0.99 });
+  assertEqual(s.bestTest().wpm, 45);
+});
+
+test("Storage: test history is capped at 20 entries", () => {
+  const s = freshStorage();
+  for (let i = 0; i < 25; i++) s.addTest({ durationSec: 60, wpm: i, accuracy: 0.9 });
+  assertEqual(s.getTests().length, 20);
+  assertEqual(s.getTests()[0].wpm, 24); // newest kept
+});
+
+test("Storage: tests persist across instances", () => {
+  const s = freshStorage();
+  s.addTest({ durationSec: 60, wpm: 25, accuracy: 0.9 });
+  assertEqual(new Storage().getTests().length, 1);
+});

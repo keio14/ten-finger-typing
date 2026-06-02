@@ -72,6 +72,22 @@ export class Storage {
     this.save();
     return this.state.lessons[id];
   }
+
+  addTest({ durationSec, wpm, accuracy }) {
+    this.state.tests.unshift({ dateISO: new Date().toISOString(), durationSec, wpm, accuracy });
+    this.state.tests = this.state.tests.slice(0, 20);
+    this.save();
+    return this.state.tests[0];
+  }
+
+  getTests() {
+    return this.state.tests;
+  }
+
+  bestTest() {
+    if (!this.state.tests.length) return null;
+    return this.state.tests.reduce((best, t) => (t.wpm > best.wpm ? t : best));
+  }
 }
 
 // One shared instance for the app (tests construct their own).
