@@ -1,70 +1,28 @@
-.confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+/* celebrate.css — full-screen confetti + star burst when a lesson is done. */
 
-/* Lesson results panel */
-.lesson-result { background: #fff; border-radius: 14px; padding: 20px 24px; margin-top: 16px;
-  box-shadow: 0 8px 24px rgba(0,60,120,.15); text-align: center; }
-.lesson-result h2 { margin: 0 0 6px; color: #1864ab; }
-.lesson-result .stat { font-weight: 700; margin: 0 10px; }
-.lesson-result .stat b { color: #1864ab; }
-.lesson-result .actions { margin-top: 14px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-.lesson-result .actions a, .lesson-result .actions button {
-  font: inherit; text-decoration: none; border: 0; border-radius: 8px; padding: 8px 16px; cursor: pointer; }
-
-/* Animated stars */
-.stars { font-size: 40px; letter-spacing: 6px; height: 48px; }
-.stars .star { display: inline-block; opacity: 0; transform: scale(.3); animation: star-pop .4s ease forwards; }
-.stars .star:nth-child(2) { animation-delay: .15s; }
-.stars .star:nth-child(3) { animation-delay: .3s; }
-.stars .dim { opacity: .25; }
-@keyframes star-pop { to { opacity: 1; transform: scale(1); } }
-
-/* Curriculum browser */
-.course { margin-bottom: 26px; }
-.course h2 { color: #1864ab; margin-bottom: 4px; }
-.course .progress { color: #495057; font-size: 14px; margin-bottom: 10px; }
-.unit h3 { margin: 12px 0 6px; font-size: 16px; color: #343a40; }
-.lesson-list { display: flex; flex-wrap: wrap; gap: 10px; }
-.lesson-chip { display: flex; flex-direction: column; gap: 4px; min-width: 150px; padding: 10px 14px;
-  background: #fff; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,60,120,.1);
-  text-decoration: none; color: #1b2733; }
-.lesson-chip .chip-stars { font-size: 14px; color: #f59f00; }
-.lesson-chip.locked { opacity: .5; cursor: not-allowed; }
-.lesson-chip:not(.locked):hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,60,120,.18); }
-
-/* Dashboard */
-.dash-progress { margin: 10px 0; }
-.dash-progress .bar { background: #d0ebff; border-radius: 8px; height: 16px; overflow: hidden; }
-.dash-progress .bar-fill { background: #1864ab; height: 100%; transition: width .4s ease; }
-.dash-progress span { font-size: 14px; color: #495057; }
-.dash-stats { font-size: 16px; }
-.dash-cards { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 20px; }
-.dash-card { flex: 1 1 180px; min-width: 160px; text-decoration: none; color: #1b2733;
-  background: #fff; border-radius: 14px; padding: 16px; box-shadow: 0 4px 14px rgba(0,60,120,.12); }
-.dash-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,60,120,.2); }
-.dash-card h3 { margin: 0 0 6px; color: #1864ab; }
-.dash-card p { margin: 0; font-size: 14px; color: #495057; }
-.achv-list { display: flex; flex-wrap: wrap; gap: 8px; }
-.achv { background: #fff3bf; border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: 14px; }
-.cert-list { display: flex; flex-wrap: wrap; gap: 10px; }
-.cert-chip { text-decoration: none; background: #fff; border-radius: 12px; padding: 10px 16px;
-  box-shadow: 0 3px 10px rgba(0,60,120,.12); color: #1b2733; font-weight: 700; }
-.dash-name { margin-top: 24px; font-size: 14px; }
-
-/* Certificate */
-.cert { display: flex; justify-content: center; margin: 16px 0; }
-.cert-inner { background: #fffdf5; border: 8px double #1864ab; border-radius: 14px;
-  padding: 36px 48px; max-width: 620px; text-align: center; box-shadow: 0 10px 30px rgba(0,60,120,.18); }
-.cert-badge { font-size: 56px; }
-.cert-inner h1 { color: #1864ab; margin: 8px 0 16px; }
-.cert-sub { margin: 6px 0; color: #495057; }
-.cert-name { font: 700 30px "Trebuchet MS", sans-serif; color: #c2255c; margin: 10px 0; }
-.cert-stats { margin-top: 16px; color: #343a40; font-weight: 700; }
-.cert-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
-.cert-actions button, .cert-actions a { font: inherit; border: 0; border-radius: 8px; padding: 8px 16px; cursor: pointer; text-decoration: none; }
-
-@media print {
-  .nav, .cert-actions, .no-print { display: none !important; }
-  body { background: #fff; }
-  .cert { margin: 0; }
-  .cert-inner { box-shadow: none; }
+.celebrate {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 50;
+}
+.celebrate-stars {
+  position: absolute; top: 38%; left: 0; right: 0;
+  text-align: center; font-size: 4rem;
+  animation: starpop 0.6s ease;
+}
+@keyframes starpop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.confetti {
+  position: absolute; top: -20px;
+  width: 10px; height: 14px;
+  border-radius: 2px;
+  animation: fall 1.6s linear forwards;
+}
+@keyframes fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(540deg); opacity: 0.9; }
 }

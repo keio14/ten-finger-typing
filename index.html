@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ten-Finger Typing</title>
-<link rel="stylesheet" href="styles/main.css" />
-<link rel="stylesheet" href="styles/keyboard.css" />
-<link rel="stylesheet" href="styles/celebrate.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ten-Finger Typing</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/keyboard.css" />
+  <link rel="stylesheet" href="styles/game.css" />
+  <link rel="stylesheet" href="styles/celebrate.css" />
 </head>
 <body>
   <nav class="nav">
-    <a href="#/">🏠 Home</a>
-    <a href="#/lessons">📚 Lessons</a>
-    <a href="#/practice">⌨️ Practice</a>
-    <a href="#/tests">⏱️ Tests</a>
-    <a href="#/game">🎮 Game</a>
+    <a id="nav-home" href="#/"></a>
+    <a id="nav-lessons" href="#/lessons"></a>
+    <a id="nav-game" href="#/game"></a>
     <span class="spacer"></span>
+    <select id="lang" class="lang-select" aria-label="Language"></select>
     <span id="greeting"></span>
-    <button id="mute" class="btn-ghost" type="button">🔊 Sound</button>
+    <button id="mute" class="btn-ghost" type="button"></button>
   </nav>
   <main id="app"></main>
   <script type="module" src="js/app.js"></script>

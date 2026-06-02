@@ -1,30 +1,32 @@
 import { test, assert, assertEqual } from "./harness.js";
-import { fingerFor, FINGER_LABELS } from "../js/fingers.js";
+import { fingerFor, colorFor, FINGERS } from "../js/fingers.js";
 
-test("fingerFor: home-row anchors map to index fingers", () => {
-  assertEqual(fingerFor("f").finger, "l-index");
-  assertEqual(fingerFor("j").finger, "r-index");
+test("fingerFor: home keys map to index fingers", () => {
+  assertEqual(fingerFor("f").id, "L-index");
+  assertEqual(fingerFor("j").id, "R-index");
 });
 
-test("fingerFor: pinky keys", () => {
-  assertEqual(fingerFor("a").finger, "l-pinky");
-  assertEqual(fingerFor(";").finger, "r-pinky");
+test("fingerFor: pinkies own the outer keys", () => {
+  assertEqual(fingerFor("a").id, "L-pinky");
+  assertEqual(fingerFor(";").id, "R-pinky");
 });
 
 test("fingerFor: space is a thumb", () => {
-  assertEqual(fingerFor(" ").finger, "thumb");
-});
-
-test("fingerFor: uppercase maps to same finger as lowercase", () => {
-  assertEqual(fingerFor("F").finger, fingerFor("f").finger);
-});
-
-test("fingerFor: every finger has a color and a human label", () => {
-  const f = fingerFor("d");
-  assert(/^#/.test(f.color), "color should be a hex string");
-  assert(typeof FINGER_LABELS[f.finger] === "string", "finger has a label");
+  assertEqual(fingerFor(" ").id, "thumb");
 });
 
 test("fingerFor: unknown key returns null", () => {
-  assertEqual(fingerFor("\t"), null);
+  assertEqual(fingerFor("£"), null);
+});
+
+test("colorFor: every letter a–z has a finger color", () => {
+  for (let c = 97; c <= 122; c++) {
+    const ch = String.fromCharCode(c);
+    assert(typeof colorFor(ch) === "string" && colorFor(ch)[0] === "#", `no color for ${ch}`);
+  }
+});
+
+test("FINGERS has all ten finger groups", () => {
+  // 8 fingers + thumb entry = 9 keys (pinkies/rings/middles share colors, not ids)
+  assertEqual(Object.keys(FINGERS).length, 9);
 });

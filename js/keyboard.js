@@ -1,77 +1,76 @@
-// js/keyboard.js — DOM on-screen keyboard with finger coloring + next-key highlight.
-import { fingerFor, FINGER_LABELS } from "./fingers.js";
+// keyboard.js — draws an on-screen QWERTY keyboard and can highlight the
+// "next key to press", tinted with that key's finger color. This is the
+// visual guide that teaches a beginner where each finger goes.
+
+import { colorFor } from "./fingers.js";
 
 const ROWS = [
-  ["1","2","3","4","5","6","7","8","9","0","-","="],
-  ["q","w","e","r","t","y","u","i","o","p"],
-  ["a","s","d","f","g","h","j","k","l",";"],
-  ["z","x","c","v","b","n","m",",","."],
+  ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+  ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";"],
+  ["z", "x", "c", "v", "b", "n", "m", ",", ".", "/"],
 ];
 
-export function renderKeyboard(host) {
-  const el = document.createElement("div");
-  el.className = "keyboard";
+// Build the keyboard DOM inside `container`. Returns an API to highlight keys.
+export function renderKeyboard(container) {
+  container.innerHTML = "";
+  container.classList.add("keyboard");
+
+  const keyEls = new Map(); // char -> element
 
   for (const row of ROWS) {
     const rowEl = document.createElement("div");
     rowEl.className = "kb-row";
-    for (const k of row) {
-      const key = document.createElement("div");
-      key.className = "kb-key";
-      key.dataset.key = k;
-      key.textContent = k;
-      const f = fingerFor(k);
-      if (f) key.style.background = f.color;
-      rowEl.appendChild(key);
+    for (const ch of row) {
+      const k = document.createElement("div");
+      k.className = "kb-key";
+      k.textContent = ch === ";" ? ";" : ch.toUpperCase();
+      k.style.setProperty("--finger", colorFor(ch));
+      // home-row bumps on F and J
+      if (ch === "f" || ch === "j") k.classList.add("kb-home");
+      keyEls.set(ch, k);
+      rowEl.appendChild(k);
     }
-    el.appendChild(rowEl);
+    container.appendChild(rowEl);
   }
 
-  // Space row with two Shift keys + spacebar.
+  // space bar row
   const spaceRow = document.createElement("div");
   spaceRow.className = "kb-row";
-  const shiftL = document.createElement("div");
-  shiftL.className = "kb-key kb-wide"; shiftL.dataset.shift = "left"; shiftL.textContent = "Shift";
   const space = document.createElement("div");
-  space.className = "kb-key kb-space"; space.dataset.key = " "; space.textContent = "space";
-  const shiftR = document.createElement("div");
-  shiftR.className = "kb-key kb-wide"; shiftR.dataset.shift = "right"; shiftR.textContent = "Shift";
-  spaceRow.append(shiftL, space, shiftR);
-  el.appendChild(spaceRow);
+  space.className = "kb-key kb-space";
+  space.textContent = "space";
+  space.style.setProperty("--finger", colorFor(" "));
+  keyEls.set(" ", space);
+  spaceRow.appendChild(space);
+  container.appendChild(spaceRow);
 
-  const hint = document.createElement("div");
-  hint.className = "kb-hint";
-  el.appendChild(hint);
+  let current = null;
 
-  host.appendChild(el);
-
-  function clear() {
-    el.querySelectorAll(".next").forEach((n) => n.classList.remove("next"));
-  }
-
-  function highlight(char) {
-    clear();
-    if (!char) { hint.textContent = ""; return; }
-    const lower = char.toLowerCase();
-    const keyEl = el.querySelector(`[data-key="${cssEscape(lower)}"]`);
-    if (keyEl) keyEl.classList.add("next");
-    const f = fingerFor(lower);
-    // Uppercase letters need the OPPOSITE-hand Shift.
-    const needsShift = char !== lower && char.toUpperCase() === char;
-    if (needsShift) {
-      const shiftSel = f && f.hand === "left" ? '[data-shift="right"]' : '[data-shift="left"]';
-      const shiftEl = el.querySelector(shiftSel);
-      if (shiftEl) shiftEl.classList.add("next");
+  function clearHighlight() {
+    if (current) {
+      current.classList.remove("kb-next");
+      current = null;
     }
-    hint.textContent = f
-      ? `Use your ${FINGER_LABELS[f.finger]}${needsShift ? " (and Shift)" : ""}`
-      : "";
   }
 
-  // Minimal CSS.escape fallback (attribute selectors choke on some chars).
-  function cssEscape(s) {
-    return (window.CSS && CSS.escape) ? CSS.escape(s) : s.replace(/[^a-z0-9 ]/gi, "\\$&");
+  // Highlight the key for `char` as the next one to press.
+  function highlight(char) {
+    clearHighlight();
+    const el = keyEls.get(char);
+    if (el) {
+      el.classList.add("kb-next");
+      current = el;
+    }
   }
 
-  return { el, highlight };
+  // Briefly flash a key green (correct) or red (wrong) on a keypress.
+  function flash(char, ok) {
+    const el = keyEls.get(char);
+    if (!el) return;
+    const cls = ok ? "kb-ok" : "kb-bad";
+    el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), 150);
+  }
+
+  return { highlight, clearHighlight, flash };
 }

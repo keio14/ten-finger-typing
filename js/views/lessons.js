@@ -1,103 +1,67 @@
-// js/views/lessons.js — curriculum browser (#/lessons) and lesson player (#/lessons/:id).
-import { store } from "../storage.js";
-import { COURSES, lessonById, courseOfLesson, nextLessonId } from "../curriculum.js";
-import { isUnlocked, computeStars, lessonText, courseProgress } from "../lessons.js";
-import { runTyping } from "../typing-runner.js";
-import { celebrateLesson } from "../celebrate.js";
-import { escapeHtml } from "../util.js";
+// views/lessons.js — the lesson list, grouped by row, showing stars earned
+// and a lock on lessons that aren't reachable yet. A lesson unlocks once the
+// previous one has been completed.
 
-export function lessonsView(host) {
-  const path = (location.hash || "").slice(1);          // "/lessons" or "/lessons/<id>"
-  const m = path.match(/^\/lessons\/(.+)$/);
-  return m ? playerView(host, decodeURIComponent(m[1])) : browserView(host);
+import { LESSONS } from "../curriculum.js";
+import { getLessonProgress } from "../state.js";
+import { t } from "../i18n.js";
+
+// A lesson is unlocked if it's the first one, or the previous is completed.
+function isUnlocked(index) {
+  if (index === 0) return true;
+  return getLessonProgress(LESSONS[index - 1].id).completed;
 }
 
-// ---- Curriculum browser ----
-function browserView(host) {
-  const starStr = (n) => "★★★".slice(0, n) + "☆☆☆".slice(0, 3 - n);
-  let html = `<h1>Lessons</h1>`;
-  for (const course of COURSES) {
-    const prog = courseProgress(store, course.id);
-    html += `<section class="course"><h2>${escapeHtml(course.title)}</h2>` +
-      `<div class="progress">${prog.done} / ${prog.total} lessons complete</div>`;
-    for (const unit of course.units) {
-      html += `<div class="unit"><h3>${escapeHtml(unit.title)}</h3><div class="lesson-list">`;
-      for (const lesson of unit.lessons) {
-        const unlocked = isUnlocked(store, lesson.id);
-        const rec = store.getLesson(lesson.id);
-        const stars = rec ? rec.stars : 0;
-        if (unlocked) {
-          html += `<a class="lesson-chip" href="#/lessons/${encodeURIComponent(lesson.id)}">` +
-            `<span>${escapeHtml(lesson.title)}</span>` +
-            `<span class="chip-stars">${starStr(stars)}</span></a>`;
-        } else {
-          html += `<span class="lesson-chip locked"><span>🔒 ${escapeHtml(lesson.title)}</span>` +
-            `<span class="chip-stars">${starStr(0)}</span></span>`;
-        }
-      }
-      html += `</div></div>`;
+export function renderLessons(app) {
+  // group lessons in order, remembering each one's global index
+  const groups = [];
+  LESSONS.forEach((lesson, index) => {
+    let g = groups.find((x) => x.name === lesson.group);
+    if (!g) {
+      g = { name: lesson.group, items: [] };
+      groups.push(g);
     }
-    html += `</section>`;
-  }
-  host.innerHTML = html;
-  return { destroy() {} };
-}
+    g.items.push({ lesson, index });
+  });
 
-// ---- Lesson player ----
-function playerView(host, id) {
-  const lesson = lessonById(id);
-  if (!lesson || !isUnlocked(store, id)) {
-    location.hash = "#/lessons";
-    return { destroy() {} };
-  }
-  const course = courseOfLesson(id);
-  const target = lessonText(lesson);
+  const groupHtml = groups
+    .map((g) => {
+      const items = g.items
+        .map(({ lesson, index }) => {
+          const prog = getLessonProgress(lesson.id);
+          const unlocked = isUnlocked(index);
+          const title = t("title." + lesson.id);
+          const stars = prog.stars
+            ? "⭐".repeat(prog.stars) + "☆".repeat(3 - prog.stars)
+            : "☆☆☆";
+          if (!unlocked) {
+            return `<li class="lesson-item locked" title="${t("lessons.locked")}">
+                <span class="lock">🔒</span>
+                <span class="lesson-name">${title}</span>
+                <span class="lesson-stars">${stars}</span>
+              </li>`;
+          }
+          return `<li class="lesson-item ${prog.completed ? "completed" : ""}">
+              <a href="#/lesson/${lesson.id}">
+                <span class="lesson-name">${title}</span>
+                <span class="lesson-keys">${lesson.keys.map((k) => k.toUpperCase()).join(" ")}</span>
+                <span class="lesson-stars">${stars}</span>
+              </a>
+            </li>`;
+        })
+        .join("");
+      return `<div class="lesson-group">
+          <h2>${t("group." + g.name)}</h2>
+          <ul class="lesson-list">${items}</ul>
+        </div>`;
+    })
+    .join("");
 
-  host.innerHTML =
-    `<h1>${escapeHtml(lesson.title)}</h1>` +
-    `<p><a href="#/lessons">← All lessons</a></p>` +
-    `<div id="run"></div>` +
-    `<div id="result"></div>`;
-
-  const runHost = host.querySelector("#run");
-  const resultEl = host.querySelector("#result");
-  let runner;
-
-  function finish(stats) {
-    const stars = computeStars({ accuracy: stats.accuracy, wpm: stats.wpm }, course.pass);
-    store.recordLessonResult(id, { wpm: stats.wpm, accuracy: stats.accuracy, stars });
-    // everCompleted reflects the stored best, so re-practicing a passed lesson
-    // never shows a discouraging message or hides the Next button.
-    const rec = store.getLesson(id);
-    const everCompleted = !!(rec && rec.completed);
-    if (stars >= 1) celebrateLesson();
-
-    const starHtml = [0, 1, 2].map((i) =>
-      `<span class="star${i < stars ? "" : " dim"}">★</span>`).join("");
-    const nextId = nextLessonId(id);
-    const passed = stars >= 1;
-    const headline = passed ? "Great job!" : everCompleted ? "Nice practice!" : "Keep practicing!";
-
-    resultEl.innerHTML =
-      `<div class="lesson-result">
-         <h2>${headline}</h2>
-         <div class="stars">${starHtml}</div>
-         <p><span class="stat">WPM <b>${stats.wpm}</b></span>
-            <span class="stat">Accuracy <b>${Math.round(stats.accuracy * 100)}%</b></span></p>
-         ${passed || everCompleted ? "" : `<p>Reach ${Math.round(course.pass.minAccuracy * 100)}% accuracy and ${course.pass.minWpm} WPM to pass.</p>`}
-         <div class="actions">
-           <button id="retry" class="btn-ghost" type="button">Try again</button>
-           ${everCompleted && nextId ? `<a id="next" class="btn-primary" href="#/lessons/${encodeURIComponent(nextId)}">Next lesson →</a>` : ""}
-           <a class="btn-ghost" href="#/lessons">Back to lessons</a>
-         </div>
-       </div>`;
-
-    resultEl.querySelector("#retry").addEventListener("click", () => {
-      resultEl.innerHTML = "";
-      runner.restart();
-    });
-  }
-
-  runner = runTyping(runHost, target, { onComplete: finish });
-  return { destroy() { runner.destroy(); } };
+  app.innerHTML = `
+    <section class="lessons">
+      <h1>${t("lessons.title")}</h1>
+      <p class="sub">${t("lessons.sub")}</p>
+      ${groupHtml}
+    </section>
+  `;
 }

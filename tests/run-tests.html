@@ -1,23 +1,16 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Tests</title>
-<style>body{font:14px monospace;padding:16px} .fail{color:#c00} .pass{color:#2b8a3e}</style>
-</head><body><pre id="out">running…</pre>
+<html lang="en"><head><meta charset="utf-8"><title>v2 Tests</title>
+<style>body{font:14px monospace;padding:16px} .fail{color:#c00} .pass{color:#2b8a3e} h1{font-size:16px}</style>
+</head><body><h1>Ten-Finger Typing — unit tests</h1><pre id="out">running…</pre>
 <script type="module">
   import { results } from "./harness.js";
   // Importing a test module runs its top-level test() calls.
-  await import("./engine.test.js");
-  await import("./storage.test.js");
   await import("./fingers.test.js");
-  await import("./keyboard.test.js");
-  await import("./audio.test.js");
   await import("./curriculum.test.js");
-  await import("./lessons.test.js");
-  await import("./typing-runner.test.js");
-  await import("./celebrate.test.js");
-  await import("./testgen.test.js");
-  await import("./gameengine.test.js");
-  await import("./achievements.test.js");
-  await import("./certificate.test.js");
+  await import("./typing.test.js");
+  await import("./gamelogic.test.js");
+  await import("./words.test.js");
+  await import("./i18n.test.js");
 
   const pass = results.filter(r => r.ok).length;
   const fail = results.length - pass;

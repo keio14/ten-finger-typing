@@ -21,6 +21,12 @@ export function assertEqual(actual, expected, msg) {
   }
 }
 
+export function assertDeep(actual, expected, msg) {
+  const a = JSON.stringify(actual);
+  const e = JSON.stringify(expected);
+  if (a !== e) throw new Error(`${msg || "assertDeep"}: expected ${e}, got ${a}`);
+}
+
 export function assertClose(actual, expected, eps, msg) {
   if (Math.abs(actual - expected) > eps) {
     throw new Error(`${msg || "assertClose"}: expected ~${expected}, got ${actual}`);

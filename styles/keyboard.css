@@ -1,16 +1,56 @@
-.keyboard { user-select: none; display: inline-block; padding: 10px; }
-.kb-row { display: flex; justify-content: center; gap: 6px; margin: 4px 0; }
+/* keyboard.css — the on-screen QWERTY guide. Each key carries a --finger
+   color (set in keyboard.js); the "next key" lights up in that color. */
+
+.keyboard {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  user-select: none;
+}
+.kb-row { display: flex; gap: 6px; justify-content: center; }
 .kb-key {
-  min-width: 38px; height: 44px; padding: 0 8px;
+  --finger: #64748b;
+  width: 46px; height: 46px;
   display: flex; align-items: center; justify-content: center;
-  border-radius: 8px; font: 600 15px "Trebuchet MS", sans-serif;
-  color: #1b2733; box-shadow: 0 2px 0 rgba(0,0,0,0.15);
-  opacity: 0.55; transition: transform .08s, opacity .08s, box-shadow .08s;
+  border-radius: 10px;
+  background: #f1f5f9;
+  border-bottom: 4px solid #cbd5e1;
+  font-weight: 700; font-size: 1.1rem;
+  color: #334155;
+  position: relative;
 }
-.kb-wide { min-width: 64px; }
-.kb-space { min-width: 260px; }
-.kb-key.next {
-  opacity: 1; transform: translateY(-2px) scale(1.06);
-  outline: 3px solid #1b2733; box-shadow: 0 0 14px rgba(27,39,51,0.5);
+/* a small colored dot in the corner shows which finger owns the key */
+.kb-key::after {
+  content: ""; position: absolute; top: 5px; right: 5px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--finger); opacity: 0.85;
 }
-.kb-hint { text-align: center; margin-top: 8px; font: 600 16px "Trebuchet MS", sans-serif; color: #1864ab; min-height: 22px; }
+.kb-home::before {
+  content: ""; position: absolute; bottom: 8px; left: 50%;
+  transform: translateX(-50%);
+  width: 14px; height: 3px; border-radius: 2px; background: #94a3b8;
+}
+.kb-space { width: 240px; font-size: 0.85rem; color: #64748b; }
+
+/* the next key to press: filled with its finger color */
+.kb-key.kb-next {
+  background: var(--finger);
+  color: #fff;
+  border-bottom-color: rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.6), 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+.kb-key.kb-next::after { background: #fff; }
+
+/* keypress flashes */
+.kb-key.kb-ok { background: #bbf7d0; border-bottom-color: #16a34a; }
+.kb-key.kb-bad { background: #fecaca; border-bottom-color: #dc2626; }
+
+@media (max-width: 560px) {
+  .kb-key { width: 34px; height: 38px; font-size: 0.95rem; }
+  .kb-space { width: 170px; }
+}
