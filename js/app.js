@@ -2,6 +2,7 @@
 import { store } from "./storage.js";
 import { audio } from "./audio.js";
 import { practiceView } from "./views/practice.js";
+import { escapeHtml } from "./util.js";
 
 const app = document.getElementById("app");
 let current = null; // { destroy? }
@@ -30,11 +31,6 @@ function homeView(host) {
     `<h1>Welcome${name ? ", " + escapeHtml(name) : ""}! 👋</h1>` +
     `<p>This is the foundation build. Try <a href="#/practice">Practice</a> to type with ` +
     `the on-screen keyboard guide.</p>`;
-}
-
-function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, (c) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
 function updateGreeting() {

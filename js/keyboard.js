@@ -55,13 +55,14 @@ export function renderKeyboard(host) {
     const lower = char.toLowerCase();
     const keyEl = el.querySelector(`[data-key="${cssEscape(lower)}"]`);
     if (keyEl) keyEl.classList.add("next");
-    // Uppercase letters need Shift.
+    const f = fingerFor(lower);
+    // Uppercase letters need the OPPOSITE-hand Shift.
     const needsShift = char !== lower && char.toUpperCase() === char;
     if (needsShift) {
-      const shiftEl = el.querySelector("[data-shift]");
+      const shiftSel = f && f.hand === "left" ? '[data-shift="right"]' : '[data-shift="left"]';
+      const shiftEl = el.querySelector(shiftSel);
       if (shiftEl) shiftEl.classList.add("next");
     }
-    const f = fingerFor(lower);
     hint.textContent = f
       ? `Use your ${FINGER_LABELS[f.finger]}${needsShift ? " (and Shift)" : ""}`
       : "";

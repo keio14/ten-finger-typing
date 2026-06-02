@@ -2,6 +2,7 @@
 import { TextSession } from "../engine.js";
 import { renderKeyboard } from "../keyboard.js";
 import { audio } from "../audio.js";
+import { escapeHtml } from "../util.js";
 
 const SAMPLE = "the quick brown fox jumps over the lazy dog";
 
@@ -32,9 +33,9 @@ export function practiceView(host) {
     const cur = SAMPLE[i] || "";
     const after = SAMPLE.slice(i + 1);
     targetEl.innerHTML =
-      `<span class="done">${esc(before)}</span>` +
-      `<span class="cur">${esc(cur)}</span>` +
-      `<span>${esc(after)}</span>`;
+      `<span class="done">${escapeHtml(before)}</span>` +
+      `<span class="cur">${escapeHtml(cur)}</span>` +
+      `<span>${escapeHtml(after)}</span>`;
     kb.highlight(session.nextChar);
   }
 
@@ -43,6 +44,18 @@ export function practiceView(host) {
     wpmEl.textContent = s.wpm;
     accEl.textContent = Math.round(s.accuracy * 100) + "%";
     timeEl.textContent = (s.elapsedMs / 1000).toFixed(1) + "s";
+  }
+
+  let flashTimer = null;
+  function flashError() {
+    const curEl = targetEl.querySelector(".cur");
+    if (!curEl) return;
+    curEl.classList.add("err");
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(() => {
+      const c = targetEl.querySelector(".cur");
+      if (c) c.classList.remove("err");
+    }, 220);
   }
 
   function start() {
@@ -69,7 +82,7 @@ export function practiceView(host) {
     const beforeErrors = session.errors;
     session.handleKey(e.key);
     if (session.isComplete) return;         // complete sound handled in onComplete
-    if (session.errors > beforeErrors) audio.play("wrong");
+    if (session.errors > beforeErrors) { audio.play("wrong"); flashError(); }
     else if (session.index > before) audio.play("key");
   }
 
@@ -79,9 +92,4 @@ export function practiceView(host) {
   return {
     destroy() { window.removeEventListener("keydown", onKey); },
   };
-}
-
-function esc(s) {
-  return s.replace(/[&<>"']/g, (c) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }

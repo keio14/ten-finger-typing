@@ -28,11 +28,12 @@ test("highlight: moves highlight when called again", () => {
   assert(kb.el.querySelector('[data-key="j"]').classList.contains("next"), "j set");
 });
 
-test("highlight: uppercase also lights a Shift key", () => {
+test("highlight: uppercase lights the opposite-hand Shift key", () => {
   const kb = mount();
-  kb.highlight("F");
+  kb.highlight("F"); // F is a left-hand letter -> right Shift
   assert(kb.el.querySelector('[data-key="f"]').classList.contains("next"), "f lit");
-  assert(kb.el.querySelector('[data-shift]').classList.contains("next"), "shift lit");
+  assert(kb.el.querySelector('[data-shift="right"]').classList.contains("next"), "right shift lit");
+  assert(!kb.el.querySelector('[data-shift="left"]').classList.contains("next"), "left shift not lit");
 });
 
 test("highlight: shows a finger hint", () => {
