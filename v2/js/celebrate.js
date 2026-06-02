@@ -17,8 +17,7 @@ export function celebrate(stars = 3) {
   for (let i = 0; i < 40; i++) {
     const piece = document.createElement("span");
     piece.className = "confetti";
-    const left = Math.floor((i / 40) * 100) + (i % 3) * 4; // spread, no Math.random needed
-    piece.style.left = `${left % 100}%`;
+    piece.style.left = `${Math.random() * 100}%`; // natural random spread
     piece.style.background = COLORS[i % COLORS.length];
     piece.style.animationDelay = `${(i % 10) * 0.05}s`;
     overlay.appendChild(piece);

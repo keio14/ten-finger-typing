@@ -17,24 +17,30 @@ import {
   isGameOver,
 } from "./gamelogic.js";
 import { colorFor } from "./fingers.js";
-import { lettersLearnedThrough } from "./curriculum.js";
-import { recordGame, getGameBest } from "./state.js";
+import { LESSONS, lettersLearnedThrough } from "./curriculum.js";
+import { recordGame, getGameBest, getLessonProgress } from "./state.js";
 import * as audio from "./audio.js";
 
-// Pick a letter from a pool using a counter (no Math.random — keeps things
-// deterministic-ish and avoids the banned RNG; still feels varied enough).
+// Pick a letter from the pool uniformly at random. (Math.random is fine here;
+// only the pure logic module gamelogic.js must stay deterministic.)
 function makePicker(pool) {
-  let i = 0;
-  return () => {
-    const ch = pool[i % pool.length];
-    // stride by a prime so consecutive picks jump around the pool
-    i += 7;
-    return ch;
-  };
+  return () => pool[Math.floor(Math.random() * pool.length)];
+}
+
+// The id of the furthest lesson the player has completed, or the first
+// lesson's id when none are done yet (so a new player still gets a small pool —
+// the first lesson teaches f and j).
+function furthestCompletedId() {
+  let id = LESSONS[0].id;
+  for (const l of LESSONS) {
+    if (getLessonProgress(l.id).completed) id = l.id;
+  }
+  return id;
 }
 
 export function renderGame(app) {
-  const pool = lettersLearnedThrough(); // all learned letters (a–z available)
+  // Only drop letters the player has actually learned so far.
+  const pool = lettersLearnedThrough(furthestCompletedId());
   const pickLetter = makePicker(pool.length ? pool : ["f", "j", "d", "k"]);
   const best = getGameBest();
 

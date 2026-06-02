@@ -1,4 +1,4 @@
-import { test, assert, assertEqual } from "./harness.js";
+import { test, assert, assertEqual, assertDeep } from "./harness.js";
 import {
   LESSONS,
   getLesson,
@@ -44,4 +44,26 @@ test("lettersLearnedThrough grows as you progress", () => {
   const later = lettersLearnedThrough("words-mix");
   assert(first.includes("f") && first.includes("j"), "first lesson should teach f and j");
   assert(later.length >= first.length, "later should know at least as many letters");
+});
+
+test("lettersLearnedThrough is bounded by the lesson id", () => {
+  const first = lettersLearnedThrough("home-fj");
+  assertEqual(first.length, 2, "first lesson teaches exactly two letters");
+  assert(first.includes("f") && first.includes("j"), "first lesson should teach f and j");
+});
+
+test("earlier lessons are a subset of later lessons", () => {
+  const first = lettersLearnedThrough("home-fj");
+  const later = new Set(lettersLearnedThrough("words-mix"));
+  for (const ch of first) {
+    assert(later.has(ch), `"${ch}" learned early should still be known later`);
+  }
+});
+
+test("lesson groups appear in teaching order", () => {
+  const order = [];
+  for (const l of LESSONS) {
+    if (!order.includes(l.group)) order.push(l.group);
+  }
+  assertDeep(order, ["Home row", "Top row", "Bottom row", "Words"], "group order");
 });
