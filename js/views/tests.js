@@ -12,6 +12,7 @@ const DURATIONS = [
 export function testsView(host) {
   let runner = null;
   let timerId = null;
+  let finished = false;
 
   function cleanup() {
     if (runner) { runner.destroy(); runner = null; }
@@ -49,13 +50,14 @@ export function testsView(host) {
 
   function run(sec) {
     cleanup();
-    const text = testText(Math.max(40, Math.ceil((sec / 60) * 45)));
+    finished = false;
+    const text = testText(Math.max(50, Math.ceil((sec / 60) * 65)));
     host.innerHTML =
       `<h1>Typing Test</h1>
        <div class="test-timer">Time left: <b id="tleft">${sec}</b>s</div>
        <div id="run"></div>
        <div id="result"></div>`;
-    runner = runTyping(host.querySelector("#run"), text, {});
+    runner = runTyping(host.querySelector("#run"), text, { onComplete: () => finish(sec) });
     let left = sec;
     const tEl = host.querySelector("#tleft");
     timerId = setInterval(() => {
@@ -66,12 +68,15 @@ export function testsView(host) {
   }
 
   function finish(sec) {
+    if (finished) return;
+    finished = true;
     const s = runner ? runner.stats : { wpm: 0, accuracy: 1 };
     if (timerId) { clearInterval(timerId); timerId = null; }
     if (runner) { runner.destroy(); runner = null; }
+    const prevBest = store.bestTest();
     store.addTest({ durationSec: sec, wpm: s.wpm, accuracy: s.accuracy });
+    const isBest = !prevBest || s.wpm > prevBest.wpm;
     const best = store.bestTest();
-    const isBest = best && best.wpm === s.wpm;
     const resultEl = host.querySelector("#result");
     resultEl.innerHTML =
       `<div class="lesson-result">
