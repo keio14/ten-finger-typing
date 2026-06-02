@@ -4,6 +4,7 @@ import { audio } from "./audio.js";
 import { practiceView } from "./views/practice.js";
 import { lessonsView } from "./views/lessons.js";
 import { testsView } from "./views/tests.js";
+import { gameView } from "./views/game.js";
 import { escapeHtml } from "./util.js";
 
 const app = document.getElementById("app");
@@ -13,6 +14,7 @@ const routes = {
   "/": homeView,
   "/practice": practiceView,
   "/tests": testsView,
+  "/game": gameView,
 };
 
 function mount(view) {

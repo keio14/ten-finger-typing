@@ -30,3 +30,6 @@ main { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
 .test-timer { font: 700 20px "Trebuchet MS", sans-serif; color: #c92a2a; margin-bottom: 12px; }
 .test-history { list-style: none; padding: 0; margin: 8px 0; }
 .test-history li { padding: 6px 0; border-bottom: 1px solid #d0ebff; color: #343a40; }
+
+/* Falling-letters game */
+.game-canvas { display: block; margin: 12px auto; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,60,120,.18); max-width: 100%; }
