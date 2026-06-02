@@ -55,6 +55,23 @@ export class Storage {
     this.state.settings = { ...this.state.settings, ...patch };
     this.save();
   }
+
+  getLesson(id) {
+    return this.state.lessons[id] || null;
+  }
+
+  // Merge a lesson attempt: keep the best wpm/accuracy/stars; complete once stars >= 1.
+  recordLessonResult(id, { wpm, accuracy, stars }) {
+    const prev = this.state.lessons[id] || { bestWpm: 0, bestAccuracy: 0, stars: 0, completed: false };
+    this.state.lessons[id] = {
+      bestWpm: Math.max(prev.bestWpm, wpm),
+      bestAccuracy: Math.max(prev.bestAccuracy, accuracy),
+      stars: Math.max(prev.stars, stars),
+      completed: prev.completed || stars >= 1,
+    };
+    this.save();
+    return this.state.lessons[id];
+  }
 }
 
 // One shared instance for the app (tests construct their own).

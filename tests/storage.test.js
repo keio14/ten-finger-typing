@@ -41,3 +41,36 @@ test("Storage: missing keys are backfilled from defaults", () => {
   assert(Array.isArray(s.state.tests), "tests array should be backfilled");
   assert(typeof s.state.game.highScore === "number", "game.highScore backfilled");
 });
+
+test("Storage: recordLessonResult stores best values and marks completion", () => {
+  const s = freshStorage();
+  s.recordLessonResult("home-fj", { wpm: 12, accuracy: 0.9, stars: 1 });
+  let p = s.getLesson("home-fj");
+  assertEqual(p.completed, true);
+  assertEqual(p.stars, 1);
+  assertEqual(p.bestWpm, 12);
+  // a worse later attempt must not lower bests or un-complete
+  s.recordLessonResult("home-fj", { wpm: 5, accuracy: 0.5, stars: 0 });
+  p = s.getLesson("home-fj");
+  assertEqual(p.bestWpm, 12);
+  assertEqual(p.stars, 1);
+  assertEqual(p.completed, true);
+});
+
+test("Storage: a failing first attempt (0 stars) does not mark completed", () => {
+  const s = freshStorage();
+  s.recordLessonResult("top-ei", { wpm: 4, accuracy: 0.5, stars: 0 });
+  assertEqual(s.getLesson("top-ei").completed, false);
+});
+
+test("Storage: getLesson returns null for an unknown lesson", () => {
+  const s = freshStorage();
+  assertEqual(s.getLesson("nope"), null);
+});
+
+test("Storage: lesson progress persists across instances", () => {
+  const s = freshStorage();
+  s.recordLessonResult("home-dk", { wpm: 20, accuracy: 0.97, stars: 2 });
+  const s2 = new Storage();
+  assertEqual(s2.getLesson("home-dk").stars, 2);
+});
