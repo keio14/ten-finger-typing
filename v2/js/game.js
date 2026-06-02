@@ -17,28 +17,19 @@ import {
   isGameOver,
 } from "./gamelogic.js";
 import { colorFor } from "./fingers.js";
-import { LESSONS, lettersLearnedThrough } from "./curriculum.js";
 import { wordsFor } from "./words.js";
-import { recordGame, getGameBest, getLessonProgress } from "./state.js";
+import { recordGame, getGameBest } from "./state.js";
 import { isTypingKey } from "./typing.js";
 import { t } from "./i18n.js";
 import * as audio from "./audio.js";
 
 const PARTICLE_COLORS = ["#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899"];
-
-// The id of the furthest lesson the player has completed, or the first lesson's
-// id when none are done yet (so a new player still gets a small word pool).
-function furthestCompletedId() {
-  let id = LESSONS[0].id;
-  for (const l of LESSONS) {
-    if (getLessonProgress(l.id).completed) id = l.id;
-  }
-  return id;
-}
+const ALL_LETTERS = "abcdefghijklmnopqrstuvwxyz".split("");
 
 export function renderGame(app) {
-  // Only use words the player can actually type with the letters learned so far.
-  const pool = wordsFor(lettersLearnedThrough(furthestCompletedId()));
+  // Use the whole word bank (short to long) — the game is for fun + vocabulary,
+  // so it isn't restricted to the letters learned in lessons.
+  const pool = wordsFor(ALL_LETTERS);
   const pickWord = () => pool[Math.floor(Math.random() * pool.length)];
   const best = getGameBest();
 
@@ -78,7 +69,9 @@ export function renderGame(app) {
   ctx.scale(dpr, dpr);
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  const FONT = "bold 30px system-ui, sans-serif";
+  const FONT = "bold 34px system-ui, sans-serif";
+  const NEXT_FONT = "bold 40px system-ui, sans-serif";
+  const LETTER_GAP = 3; // extra px between letters so words read clearly
 
   // --- mutable game state ---
   let words = [];
@@ -144,50 +137,55 @@ export function renderGame(app) {
   function drawWord(w) {
     ctx.font = FONT;
     const widths = [...w.text].map((c) => ctx.measureText(c).width);
-    const total = widths.reduce((a, b) => a + b, 0);
-    const pad = 14;
+    const gaps = LETTER_GAP * (w.text.length - 1);
+    const total = widths.reduce((a, b) => a + b, 0) + gaps;
+    const pad = 18;
     const active = w.id === activeId;
     const half = total / 2 + pad; // keep the whole pill on screen
     const cx = Math.max(half, Math.min(W - half, w.x));
     const pulse = active ? 1 + Math.sin(elapsed * 8) * 0.04 : 1;
 
-    // pill background
+    // pill: a soft drop shadow, then a SOLID white card with a clear border
+    // (solid — so the colored letters never wash out against the pastel sky)
     ctx.save();
     ctx.translate(cx, w.y);
     ctx.scale(pulse, pulse);
-    roundRect(ctx, -half, -22, half * 2, 44, 14);
-    ctx.fillStyle = active ? "rgba(59,130,246,0.18)" : "rgba(255,255,255,0.85)";
+    roundRect(ctx, -half, -24 + 5, half * 2, 48, 16); // shadow
+    ctx.fillStyle = "rgba(15,23,42,0.12)";
     ctx.fill();
-    ctx.lineWidth = active ? 3 : 1.5;
-    ctx.strokeStyle = active ? "#3b82f6" : "#e2e8f0";
+    roundRect(ctx, -half, -24, half * 2, 48, 16); // card
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+    ctx.lineWidth = active ? 4 : 2;
+    ctx.strokeStyle = active ? "#3b82f6" : "#cbd5e1";
     ctx.stroke();
     ctx.restore();
 
-    // letters
+    // letters — bold, fully opaque, finger-colored; the active word's next
+    // letter is bigger, dark, and underlined so it's obvious what to press.
     let x = cx - total / 2;
     for (let i = 0; i < w.text.length; i++) {
       const c = w.text[i];
       const cw = widths[i];
       const isNext = active && i === w.typed;
-      ctx.font = isNext ? "bold 32px system-ui, sans-serif" : FONT;
+      ctx.font = isNext ? NEXT_FONT : FONT;
       if (i < w.typed) {
-        ctx.fillStyle = "#cbd5e1"; // already typed
+        ctx.fillStyle = "#94a3b8"; // already typed (dimmed but still readable)
       } else if (isNext) {
-        ctx.fillStyle = "#1e293b"; // the very next letter to press
+        ctx.fillStyle = "#0f172a"; // the very next letter to press
       } else {
         ctx.fillStyle = colorFor(c); // upcoming letters in finger colors
       }
       ctx.fillText(c, x + cw / 2, w.y);
       if (isNext) {
-        // little underline under the next letter
         ctx.strokeStyle = "#3b82f6";
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(x + 2, w.y + 16);
-        ctx.lineTo(x + cw - 2, w.y + 16);
+        ctx.moveTo(x + 1, w.y + 17);
+        ctx.lineTo(x + cw - 1, w.y + 17);
         ctx.stroke();
       }
-      x += cw;
+      x += cw + LETTER_GAP;
     }
   }
 

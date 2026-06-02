@@ -52,11 +52,12 @@
   100% { opacity: 0; transform: scale(1); }
 }
 
-/* game-over overlay */
+/* game-over overlay — soft light backdrop (no dark/black screen) */
 .overlay {
   position: absolute; inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(3px);
+  border-radius: 18px;
   display: flex; align-items: center; justify-content: center;
 }
 .overlay-card {
