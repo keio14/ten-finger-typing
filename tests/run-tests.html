@@ -16,6 +16,8 @@
   await import("./celebrate.test.js");
   await import("./testgen.test.js");
   await import("./gameengine.test.js");
+  await import("./achievements.test.js");
+  await import("./certificate.test.js");
 
   const pass = results.filter(r => r.ok).length;
   const fail = results.length - pass;

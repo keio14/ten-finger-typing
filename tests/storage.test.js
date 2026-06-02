@@ -114,3 +114,19 @@ test("Storage: recordGame keeps the max high score and best level", () => {
   assertEqual(s.getGame().highScore, 30);
   assertEqual(s.getGame().bestLevel, 5);
 });
+
+test("Storage: addAchievement is deduped and persists", () => {
+  const s = freshStorage();
+  assertEqual(s.addAchievement("first-lesson"), true);
+  assertEqual(s.addAchievement("first-lesson"), false); // already earned
+  assertEqual(s.getAchievements().length, 1);
+  assertEqual(new Storage().getAchievements()[0], "first-lesson");
+});
+
+test("Storage: addCertificate is one-per-course and persists", () => {
+  const s = freshStorage();
+  assertEqual(s.addCertificate({ courseId: "beginner", dateISO: "2026-01-01", wpm: 20, accuracy: 0.95 }), true);
+  assertEqual(s.addCertificate({ courseId: "beginner", dateISO: "2026-02-02", wpm: 99, accuracy: 1 }), false);
+  assertEqual(s.getCertificates().length, 1);
+  assertEqual(new Storage().getCertificates()[0].wpm, 20);
+});

@@ -101,6 +101,28 @@ export class Storage {
     this.save();
     return this.state.game;
   }
+
+  getAchievements() {
+    return this.state.achievements;
+  }
+
+  addAchievement(id) {
+    if (this.state.achievements.includes(id)) return false;
+    this.state.achievements.push(id);
+    this.save();
+    return true;
+  }
+
+  getCertificates() {
+    return this.state.certificates;
+  }
+
+  addCertificate(cert) {
+    if (this.state.certificates.some((c) => c.courseId === cert.courseId)) return false;
+    this.state.certificates.push(cert);
+    this.save();
+    return true;
+  }
 }
 
 // One shared instance for the app (tests construct their own).
