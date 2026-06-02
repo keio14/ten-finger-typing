@@ -30,3 +30,41 @@
 .lesson-chip .chip-stars { font-size: 14px; color: #f59f00; }
 .lesson-chip.locked { opacity: .5; cursor: not-allowed; }
 .lesson-chip:not(.locked):hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,60,120,.18); }
+
+/* Dashboard */
+.dash-progress { margin: 10px 0; }
+.dash-progress .bar { background: #d0ebff; border-radius: 8px; height: 16px; overflow: hidden; }
+.dash-progress .bar-fill { background: #1864ab; height: 100%; transition: width .4s ease; }
+.dash-progress span { font-size: 14px; color: #495057; }
+.dash-stats { font-size: 16px; }
+.dash-cards { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 20px; }
+.dash-card { flex: 1 1 180px; min-width: 160px; text-decoration: none; color: #1b2733;
+  background: #fff; border-radius: 14px; padding: 16px; box-shadow: 0 4px 14px rgba(0,60,120,.12); }
+.dash-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,60,120,.2); }
+.dash-card h3 { margin: 0 0 6px; color: #1864ab; }
+.dash-card p { margin: 0; font-size: 14px; color: #495057; }
+.achv-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.achv { background: #fff3bf; border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: 14px; }
+.cert-list { display: flex; flex-wrap: wrap; gap: 10px; }
+.cert-chip { text-decoration: none; background: #fff; border-radius: 12px; padding: 10px 16px;
+  box-shadow: 0 3px 10px rgba(0,60,120,.12); color: #1b2733; font-weight: 700; }
+.dash-name { margin-top: 24px; font-size: 14px; }
+
+/* Certificate */
+.cert { display: flex; justify-content: center; margin: 16px 0; }
+.cert-inner { background: #fffdf5; border: 8px double #1864ab; border-radius: 14px;
+  padding: 36px 48px; max-width: 620px; text-align: center; box-shadow: 0 10px 30px rgba(0,60,120,.18); }
+.cert-badge { font-size: 56px; }
+.cert-inner h1 { color: #1864ab; margin: 8px 0 16px; }
+.cert-sub { margin: 6px 0; color: #495057; }
+.cert-name { font: 700 30px "Trebuchet MS", sans-serif; color: #c2255c; margin: 10px 0; }
+.cert-stats { margin-top: 16px; color: #343a40; font-weight: 700; }
+.cert-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
+.cert-actions button, .cert-actions a { font: inherit; border: 0; border-radius: 8px; padding: 8px 16px; cursor: pointer; text-decoration: none; }
+
+@media print {
+  .nav, .cert-actions, .no-print { display: none !important; }
+  body { background: #fff; }
+  .cert { margin: 0; }
+  .cert-inner { box-shadow: none; }
+}

@@ -5,13 +5,14 @@ import { practiceView } from "./views/practice.js";
 import { lessonsView } from "./views/lessons.js";
 import { testsView } from "./views/tests.js";
 import { gameView } from "./views/game.js";
-import { escapeHtml } from "./util.js";
+import { dashboardView } from "./views/dashboard.js";
+import { certificateView } from "./views/certificate.js";
 
 const app = document.getElementById("app");
 let current = null; // { destroy? }
 
 const routes = {
-  "/": homeView,
+  "/": dashboardView,
   "/practice": practiceView,
   "/tests": testsView,
   "/game": gameView,
@@ -26,17 +27,9 @@ function mount(view) {
 function router() {
   const path = (location.hash || "#/").slice(1);
   if (path === "/lessons" || path.startsWith("/lessons/")) { mount(lessonsView); return; }
-  const view = routes[path] || homeView;
+  if (path.startsWith("/certificate/")) { mount(certificateView); return; }
+  const view = routes[path] || dashboardView;
   mount(view);
-}
-
-// Simple placeholder home until Phase 5 builds the real dashboard.
-function homeView(host) {
-  const name = store.getName();
-  host.innerHTML =
-    `<h1>Welcome${name ? ", " + escapeHtml(name) : ""}! 👋</h1>` +
-    `<p>Start the <a href="#/lessons">Lessons</a> to learn touch typing step by step, ` +
-    `or try <a href="#/practice">Free Practice</a>.</p>`;
 }
 
 function updateGreeting() {
