@@ -79,9 +79,10 @@ test("TextSession: accuracy = correct / total typed (backspace not counted)", ()
 test("TextSession: stats.wpm uses correct chars over elapsed time", () => {
   const clock = fakeClock();
   const s = new TextSession("aaaaaaaaaa", {}, clock.now); // 10 chars
-  s.handleKey("a");          // timer starts at t=0
-  for (let i = 0; i < 9; i++) s.handleKey("a");
-  clock.t = 60000;           // pretend a minute passed
+  s.handleKey("a");          // timer starts at t=0 (1 typed, index 1)
+  for (let i = 0; i < 8; i++) s.handleKey("a"); // 9 typed, index 9 (not complete)
+  clock.t = 60000;           // a minute passes BEFORE the final keystroke
+  s.handleKey("a");          // 10th correct char completes; _end frozen at 60000
   // 10 correct chars / 5 = 2 "words" in 1 min => 2 wpm
   assertEqual(s.stats.wpm, 2);
 });
