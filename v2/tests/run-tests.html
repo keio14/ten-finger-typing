@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>v2 Tests</title>
+<style>body{font:14px monospace;padding:16px} .fail{color:#c00} .pass{color:#2b8a3e} h1{font-size:16px}</style>
+</head><body><h1>Ten-Finger Typing — unit tests</h1><pre id="out">running…</pre>
+<script type="module">
+  import { results } from "./harness.js";
+  // Importing a test module runs its top-level test() calls.
+  await import("./fingers.test.js");
+  await import("./curriculum.test.js");
+  await import("./typing.test.js");
+  await import("./gamelogic.test.js");
+  await import("./words.test.js");
+  await import("./i18n.test.js");
+
+  const pass = results.filter(r => r.ok).length;
+  const fail = results.length - pass;
+  const lines = results.map(r =>
+    `<span class="${r.ok ? "pass" : "fail"}">${r.ok ? "PASS" : "FAIL"}</span> ${r.name}` +
+    (r.ok ? "" : `  ::  ${r.err}`));
+  document.getElementById("out").innerHTML =
+    lines.join("\n") + `\n\n${pass} passed, ${fail} failed`;
+  window.__TESTS = { pass, fail, results };
+</script>
+</body></html>
