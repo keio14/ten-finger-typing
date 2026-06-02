@@ -50,3 +50,16 @@ export function lessonText(lesson) {
   const pairs = keys.map((k, i) => k + keys[(i + 1) % keys.length]).join(" ");
   return `${triples} ${pairs}`;
 }
+
+// Single-character keys (a-z / 0-9) from all currently-unlocked lessons.
+// Falls back to the home row when the learner has barely started.
+export function practiceKeys(store) {
+  const keys = new Set();
+  for (const l of allLessons()) {
+    if (isUnlocked(store, l.id)) {
+      for (const k of l.newKeys || []) keys.add(k);
+    }
+  }
+  const filtered = [...keys].filter((k) => /^[a-z0-9]$/.test(k));
+  return filtered.length >= 3 ? filtered : ["f", "j", "d", "k", "s", "l", "a"];
+}

@@ -88,6 +88,19 @@ export class Storage {
     if (!this.state.tests.length) return null;
     return this.state.tests.reduce((best, t) => (t.wpm > best.wpm ? t : best));
   }
+
+  getGame() {
+    return this.state.game;
+  }
+
+  recordGame({ score, level }) {
+    this.state.game = {
+      highScore: Math.max(this.state.game.highScore, score),
+      bestLevel: Math.max(this.state.game.bestLevel, level),
+    };
+    this.save();
+    return this.state.game;
+  }
 }
 
 // One shared instance for the app (tests construct their own).

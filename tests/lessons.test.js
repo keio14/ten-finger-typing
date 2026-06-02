@@ -1,5 +1,5 @@
 import { test, assert, assertEqual } from "./harness.js";
-import { computeStars, isUnlocked, firstIncompleteLessonId, courseProgress, lessonText } from "../js/lessons.js";
+import { computeStars, isUnlocked, firstIncompleteLessonId, courseProgress, lessonText, practiceKeys } from "../js/lessons.js";
 import { allLessons } from "../js/curriculum.js";
 
 // A fake store: maps id -> {completed}. getLesson mirrors the real Storage interface.
@@ -53,4 +53,17 @@ test("lessonText returns content, or generates a drill from newKeys", () => {
   assertEqual(lessonText({ content: "abc" }), "abc");
   const gen = lessonText({ newKeys: ["f", "j"] });
   assert(gen.includes("fff") && gen.includes("jjj"), "generated drill repeats the keys");
+});
+
+test("practiceKeys: home-row fallback when little is unlocked", () => {
+  const keys = practiceKeys(fakeStore({}));
+  assert(keys.length >= 3, "fallback provides several keys");
+  assert(keys.includes("f") && keys.includes("j"), "includes home anchors");
+});
+
+test("practiceKeys: includes keys from unlocked lessons and excludes punctuation", () => {
+  // completing the first few home-row lessons unlocks through home-asemi
+  const keys = practiceKeys(fakeStore({ "home-fj": true, "home-dk": true, "home-sl": true }));
+  assert(keys.includes("s") && keys.includes("l"), "includes unlocked keys");
+  assert(!keys.includes(";"), "punctuation filtered out");
 });

@@ -106,3 +106,11 @@ test("Storage: tests persist across instances", () => {
   s.addTest({ durationSec: 60, wpm: 25, accuracy: 0.9 });
   assertEqual(new Storage().getTests().length, 1);
 });
+
+test("Storage: recordGame keeps the max high score and best level", () => {
+  const s = freshStorage();
+  s.recordGame({ score: 30, level: 3 });
+  s.recordGame({ score: 12, level: 5 });
+  assertEqual(s.getGame().highScore, 30);
+  assertEqual(s.getGame().bestLevel, 5);
+});
