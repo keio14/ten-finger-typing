@@ -19,6 +19,7 @@ import {
 import { colorFor } from "./fingers.js";
 import { LESSONS, lettersLearnedThrough } from "./curriculum.js";
 import { recordGame, getGameBest, getLessonProgress } from "./state.js";
+import { isTypingKey } from "./typing.js";
 import * as audio from "./audio.js";
 
 // Pick a letter from the pool uniformly at random. (Math.random is fine here;
@@ -188,8 +189,8 @@ export function renderGame(app) {
 
   function onKey(e) {
     if (!running) return;
-    if (e.key.length !== 1) return;
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    // a space passes isTypingKey but matches no falling letter, so it's a no-op
+    if (!isTypingKey(e)) return;
     const ch = e.key.toLowerCase();
     const res = applyHit(letters, ch);
     if (res.hit) {

@@ -15,6 +15,12 @@ export function wpm(correctChars, elapsedMs) {
   return Math.round(correctChars / 5 / minutes);
 }
 
+// True if a keydown is a single printable character (or space) with no modifier.
+export function isTypingKey(e) {
+  if (e.ctrlKey || e.metaKey || e.altKey) return false;
+  return e.key.length === 1 || e.key === " ";
+}
+
 // Stars 1–3 from accuracy vs the lesson's target.
 //  >= target+8  -> 3 stars
 //  >= target    -> 2 stars

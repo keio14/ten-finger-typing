@@ -114,11 +114,12 @@ export function nextLesson(id) {
 
 // All distinct lowercase letters taught up to and including a lesson id.
 // Used by the game to only drop letters the player has already learned.
+// An unknown/missing id returns an empty array (nothing learned yet).
 export function lettersLearnedThrough(id) {
   const end = lessonIndex(id);
+  if (end === -1) return [];
   const set = new Set();
-  const upto = end === -1 ? LESSONS.length - 1 : end;
-  for (let i = 0; i <= upto; i++) {
+  for (let i = 0; i <= end; i++) {
     for (const ch of LESSONS[i].drills.join("")) {
       if (ch >= "a" && ch <= "z") set.add(ch);
     }

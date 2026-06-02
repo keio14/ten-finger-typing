@@ -16,7 +16,7 @@ export function renderHome(app) {
     <section class="home">
       <h1>⌨️ Ten-Finger Typing</h1>
       <p class="welcome">
-        ${name ? `Hi, ${name}! 👋` : "Welcome! 👋"}
+        ${name ? `Hi, <span id="player-name"></span>! 👋` : "Welcome! 👋"}
         Let's learn to type with all ten fingers.
       </p>
 
@@ -36,13 +36,18 @@ export function renderHome(app) {
       </div>
 
       <div class="name-row">
-        <label>Your name: <input id="name-input" maxlength="20" value="${name || ""}" placeholder="type your name" /></label>
+        <label>Your name: <input id="name-input" maxlength="20" placeholder="type your name" /></label>
         <button class="btn-ghost" id="save-name" type="button">Save</button>
       </div>
     </section>
   `;
 
+  // Set the saved name via safe DOM APIs (textContent / value property), never
+  // raw HTML interpolation — the name is user-controlled and would otherwise XSS.
+  if (name) app.querySelector("#player-name").textContent = name;
+
   const input = app.querySelector("#name-input");
+  input.value = name || "";
   app.querySelector("#save-name").addEventListener("click", () => {
     setName(input.value);
     renderHome(app); // re-render to show the new greeting

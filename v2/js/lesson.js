@@ -5,7 +5,7 @@
 
 import { getLesson, nextLesson } from "./curriculum.js";
 import { renderKeyboard, fingerLabel } from "./keyboard.js";
-import { accuracyPct, wpm, starsFor } from "./typing.js";
+import { accuracyPct, wpm, starsFor, isTypingKey } from "./typing.js";
 import { recordLesson } from "./state.js";
 import * as audio from "./audio.js";
 import { celebrate } from "./celebrate.js";
@@ -108,8 +108,7 @@ export function renderLesson(app, id) {
   function onKey(e) {
     if (done) return;
     // ignore modifier/navigation keys; only single printable chars + space
-    if (e.key.length !== 1 && e.key !== " ") return;
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (!isTypingKey(e)) return;
     e.preventDefault();
 
     if (!startedAt) startedAt = performance.now();
@@ -125,16 +124,16 @@ export function renderLesson(app, id) {
       pos++;
       if (pos >= target.length) {
         refreshStats();
-        finish();
+        finish(); // plays audio.win(); the per-key correct beep is skipped here
         return;
       }
+      audio.correct();
     } else {
       // wrong key: mark current char, play a buzz, do NOT advance
       charEls[pos].classList.add("ch-wrong");
       kb.flash(got, false);
       audio.wrong();
     }
-    if (got === want) audio.correct();
     updateGuide();
     refreshStats();
   }
