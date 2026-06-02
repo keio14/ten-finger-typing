@@ -1,0 +1,25 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif; color: #1b2733; background: #eaf6ff; }
+.nav { display: flex; align-items: center; gap: 16px; padding: 12px 20px; background: #1864ab; color: #fff; }
+.nav a { color: #fff; text-decoration: none; font-weight: 700; opacity: .85; }
+.nav a:hover { opacity: 1; }
+.nav .spacer { flex: 1; }
+.nav button { font: inherit; border: 0; border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+main { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
+
+/* Practice view */
+.target { font: 28px/1.6 "Trebuchet MS", monospace; background: #fff; border-radius: 12px; padding: 18px 22px; box-shadow: 0 6px 18px rgba(0,60,120,.12); margin-bottom: 16px; word-break: break-word; }
+.target .done { color: #2b8a3e; }
+.target .cur { background: #ffe066; border-radius: 3px; }
+.target .err { color: #c92a2a; }
+.stats { display: flex; gap: 24px; font-weight: 700; margin-bottom: 16px; }
+.stats span b { color: #1864ab; }
+
+/* Name prompt + generic modal */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; }
+.modal { background: #fff; padding: 24px; border-radius: 14px; width: min(90vw, 360px); text-align: center; }
+.modal input { font: 18px inherit; padding: 8px 10px; width: 100%; margin: 12px 0; border: 2px solid #adb5bd; border-radius: 8px; }
+.modal .row { display: flex; gap: 10px; justify-content: center; }
+.modal button { font: inherit; border: 0; border-radius: 8px; padding: 8px 16px; cursor: pointer; }
+.btn-primary { background: #1864ab; color: #fff; }
+.btn-ghost { background: #e9ecef; }
