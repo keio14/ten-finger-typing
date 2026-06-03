@@ -9,7 +9,7 @@
 export const SPEED_TIERS = [
   {
     id: "beginner",
-    targetWpm: 8,
+    targetWpm: 20,
     showKeyboard: true,
     passages: [
       "the cat and the dog can run and play in the sun all day",
@@ -19,7 +19,7 @@ export const SPEED_TIERS = [
   },
   {
     id: "amateur",
-    targetWpm: 14,
+    targetWpm: 30,
     showKeyboard: true,
     passages: [
       "the happy little puppy likes to play with a ball in the garden",
@@ -29,7 +29,7 @@ export const SPEED_TIERS = [
   },
   {
     id: "intermediate",
-    targetWpm: 20,
+    targetWpm: 42,
     showKeyboard: true,
     passages: [
       "the quick brown fox runs over the lazy dog near the old farm gate",
@@ -39,7 +39,7 @@ export const SPEED_TIERS = [
   },
   {
     id: "advanced",
-    targetWpm: 28,
+    targetWpm: 55,
     showKeyboard: false,
     passages: [
       "typing quickly takes practice every single day so try your best and keep going",
@@ -49,7 +49,7 @@ export const SPEED_TIERS = [
   },
   {
     id: "expert",
-    targetWpm: 38,
+    targetWpm: 70,
     showKeyboard: false,
     passages: [
       "the more you practice your typing the faster your fingers will move across the keyboard without ever looking down at your hands",

@@ -19,8 +19,9 @@ function parse(hash) {
   if (h === "/game") return { name: "game" };
   const m = h.match(/^\/lesson\/(.+)$/);
   if (m) return { name: "lesson", id: m[1] };
-  const s = h.match(/^\/speed\/(.+)$/);
-  if (s) return { name: "speedrun", id: s[1] };
+  // #/speed/<id> (random passage) or #/speed/<id>/<index> (a specific one)
+  const s = h.match(/^\/speed\/([^/]+)(?:\/(\d+))?$/);
+  if (s) return { name: "speedrun", id: s[1], index: s[2] != null ? Number(s[2]) : null };
   return { name: "home" };
 }
 
@@ -42,7 +43,7 @@ function render() {
       renderSpeedList(app);
       break;
     case "speedrun":
-      cleanup = renderSpeed(app, route.id) || null;
+      cleanup = renderSpeed(app, route.id, route.index) || null;
       break;
     case "game":
       cleanup = renderGame(app) || null;
@@ -76,5 +77,8 @@ export function rerender() {
 
 export function startRouter() {
   window.addEventListener("hashchange", render);
+  // Views can force a clean re-render of the CURRENT route (e.g. "Try again"
+  // on the page you're already on, which wouldn't trigger a hashchange).
+  window.addEventListener("app:rerender", render);
   render();
 }

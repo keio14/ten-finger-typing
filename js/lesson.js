@@ -103,10 +103,15 @@ export function renderLesson(app, id) {
         ${next
           ? `<a class="btn" href="#/lesson/${next.id}">${t("lesson.next")}</a>`
           : `<p>${t("lesson.finishedAll")}</p>`}
-        <a class="btn-ghost" href="#/lesson/${lesson.id}">${t("lesson.tryAgain")}</a>
+        <button class="btn-ghost" id="lesson-again" type="button">${t("lesson.tryAgain")}</button>
         <a class="btn-ghost" href="#/lessons">${t("lesson.allLessons")}</a>
       </div>`
     );
+    // "Try again" re-runs THIS lesson. It points at the page we're already on,
+    // so a plain link wouldn't reload — re-render through the router instead.
+    app.querySelector("#lesson-again").addEventListener("click", () => {
+      window.dispatchEvent(new Event("app:rerender"));
+    });
   }
 
   function onKey(e) {

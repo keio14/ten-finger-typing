@@ -2,7 +2,9 @@
 // lesson, but the goal is SPEED: a big live words-per-minute readout and a
 // target WPM to beat. The on-screen keyboard is shown only for tiers that ask
 // for it (Beginner → Intermediate); Advanced/Expert hide it so she stops
-// looking at her hands. One random passage is used per run, for variety.
+// looking at her hands. A passage is chosen per run (random, or a specific one
+// via #/speed/<id>/<index>): "Try again" replays the same one, "Another test"
+// loads a different one at the same level.
 
 import { getTier, nextTier } from "./speedlevels.js";
 import { renderKeyboard } from "./keyboard.js";
@@ -12,20 +14,29 @@ import { t } from "./i18n.js";
 import * as audio from "./audio.js";
 import { celebrate } from "./celebrate.js";
 
-// pick a passage without the banned argless Math/Date — Math.random is fine.
-function pickPassage(tier) {
-  return tier.passages[Math.floor(Math.random() * tier.passages.length)];
+// A different passage index than `current` (so "Another test" actually changes
+// the exercise). Falls back to the same index when there is only one passage.
+function otherIndex(current, count) {
+  if (count <= 1) return current;
+  return (current + 1 + Math.floor(Math.random() * (count - 1))) % count;
 }
 
-export function renderSpeed(app, id) {
+export function renderSpeed(app, id, passageIndex) {
   const tier = getTier(id);
   if (!tier) {
     app.innerHTML = `<p class="empty"><a href="#/speed">${t("speed.allLevels")}</a></p>`;
     return;
   }
 
+  const n = tier.passages.length;
+  const hasIndex = typeof passageIndex === "number" && passageIndex >= 0 && passageIndex < n;
+  const index = hasIndex ? passageIndex : Math.floor(Math.random() * n);
+  // When we picked at random, pin the choice into the URL so "Try again"
+  // replays the SAME exercise (and language switches keep it too).
+  if (!hasIndex) history.replaceState(null, "", `#/speed/${id}/${index}`);
+
   const name = t("speedtier." + id);
-  const target = pickPassage(tier);
+  const target = tier.passages[index];
 
   app.innerHTML = `
     <section class="speed-run">
@@ -99,10 +110,27 @@ export function renderSpeed(app, id) {
         <p>${passed ? t("speed.passed") : t("speed.tooSlow", { target: tier.targetWpm })}</p>
         ${next ? `<a class="btn" href="#/speed/${next.id}">${t("speed.next")}</a>` : ""}
         ${passed && !next ? `<p>${t("speed.finishedAll")}</p>` : ""}
-        <a class="btn-ghost" href="#/speed/${tier.id}">${t("speed.retry")}</a>
+        <button class="btn-ghost" id="speed-another" type="button">${t("speed.another")}</button>
+        <button class="btn-ghost" id="speed-again" type="button">${t("speed.retry")}</button>
         <a class="btn-ghost" href="#/speed">${t("speed.allLevels")}</a>
       </div>`
     );
+
+    // "Try again" replays the SAME passage; "Another test" loads a new one at
+    // the same level. Both go through the router (app:rerender / hashchange) so
+    // the keydown listener is always cleaned up — a plain same-hash link would
+    // not re-render at all (that was the old broken "Try again").
+    app.querySelector("#speed-again").addEventListener("click", () => {
+      window.dispatchEvent(new Event("app:rerender"));
+    });
+    app.querySelector("#speed-another").addEventListener("click", () => {
+      const ni = otherIndex(index, n);
+      if (ni === index) {
+        window.dispatchEvent(new Event("app:rerender"));
+      } else {
+        location.hash = `#/speed/${tier.id}/${ni}`;
+      }
+    });
   }
 
   function onKey(e) {

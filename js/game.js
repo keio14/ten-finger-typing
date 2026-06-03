@@ -129,7 +129,11 @@ export function renderGame(app) {
         <button class="btn" id="again" type="button">${t("game.again")}</button>
         <a class="btn-ghost" href="#/">${t("game.home")}</a>
       </div>`;
-    overlay.querySelector("#again").addEventListener("click", () => renderGame(app));
+    // Re-render through the router so the finished game's loop + listeners are
+    // torn down cleanly before a fresh game starts.
+    overlay.querySelector("#again").addEventListener("click", () => {
+      window.dispatchEvent(new Event("app:rerender"));
+    });
   }
 
   // draw one word: a rounded pill, letters colored by finger; typed letters
