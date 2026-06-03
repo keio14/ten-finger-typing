@@ -48,6 +48,11 @@ export function renderHome(app) {
           <h2>${t("home.lessons")}</h2>
           <p>${t("home.lessonsDesc")}</p>
         </a>
+        <a class="card card-speed" href="#/speed">
+          <div class="card-emoji">⚡</div>
+          <h2>${t("home.speed")}</h2>
+          <p>${t("home.speedDesc")}</p>
+        </a>
         <a class="card card-game" href="#/game">
           <div class="card-emoji">🎮</div>
           <h2>${t("home.game")}</h2>

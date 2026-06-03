@@ -11,6 +11,7 @@ function paintNav() {
   const byId = (id) => document.getElementById(id);
   byId("nav-home").textContent = t("nav.home");
   byId("nav-lessons").textContent = t("nav.lessons");
+  byId("nav-speed").textContent = t("nav.speed");
   byId("nav-game").textContent = t("nav.game");
 
   const greeting = byId("greeting");

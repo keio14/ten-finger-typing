@@ -30,3 +30,17 @@ export function starsFor(accuracy, target) {
   if (accuracy >= target) return 2;
   return 1;
 }
+
+// Stars 1–3 for a SPEED tier, based on words-per-minute vs the tier target.
+// Accuracy must stay reasonable, so sloppy fast typing can't earn the top
+// stars (you can't race past the target by mashing keys).
+//  - accuracy below 80%        -> 1 star (slow down, type cleanly first)
+//  - wpm >= target * 1.25      -> 3 stars (comfortably above the target)
+//  - wpm >= target             -> 2 stars (reached the target -> tier passed)
+//  - otherwise                 -> 1 star (keep practicing to get faster)
+export function speedStars(achievedWpm, accuracy, targetWpm) {
+  if (accuracy < 80) return 1;
+  if (achievedWpm >= targetWpm * 1.25) return 3;
+  if (achievedWpm >= targetWpm) return 2;
+  return 1;
+}

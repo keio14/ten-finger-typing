@@ -7,6 +7,8 @@ const DEFAULT_STATE = {
   settings: { name: "", muted: false, lang: "en" },
   // lessons keyed by lesson id -> { completed, stars, bestAccuracy }
   lessons: {},
+  // speed tiers keyed by tier id -> { completed, stars, bestWpm }
+  speed: {},
   game: { bestScore: 0, bestLevel: 1 },
 };
 
@@ -24,6 +26,7 @@ function load() {
       settings: { ...DEFAULT_STATE.settings, ...(parsed.settings || {}) },
       game: { ...DEFAULT_STATE.game, ...(parsed.game || {}) },
       lessons: { ...(parsed.lessons || {}) },
+      speed: { ...(parsed.speed || {}) },
     };
   } catch {
     return structuredClone(DEFAULT_STATE);
@@ -80,6 +83,23 @@ export function recordLesson(id, { stars, accuracy }) {
   };
   save();
   return state.lessons[id];
+}
+
+// --- speed tiers ---
+export function getSpeedProgress(id) {
+  return state.speed[id] || { completed: false, stars: 0, bestWpm: 0 };
+}
+
+// Record a speed-tier result. Keeps the best stars/WPM seen.
+export function recordSpeed(id, { stars, wpm }) {
+  const prev = getSpeedProgress(id);
+  state.speed[id] = {
+    completed: true,
+    stars: Math.max(prev.stars, stars),
+    bestWpm: Math.max(prev.bestWpm, wpm),
+  };
+  save();
+  return state.speed[id];
 }
 
 // --- game ---

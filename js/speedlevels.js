@@ -1,0 +1,73 @@
+// speedlevels.js — the 5 speed-practice tiers. Same kind of typing at every
+// tier; what rises each level is the TARGET words-per-minute she must reach.
+// Beginner is gentle; Expert is fast. The keyboard guide is shown for the
+// first three tiers and hidden afterwards so she stops looking at her hands.
+//
+// Passages are plain lowercase a–z + spaces (pure speed practice — no new
+// symbols). One passage is picked at random per run for variety.
+
+export const SPEED_TIERS = [
+  {
+    id: "beginner",
+    targetWpm: 8,
+    showKeyboard: true,
+    passages: [
+      "the cat and the dog can run and play in the sun all day",
+      "we like to go to the park to see the big red bus go by",
+      "she has a fun new toy and we all want to play with it now",
+    ],
+  },
+  {
+    id: "amateur",
+    targetWpm: 14,
+    showKeyboard: true,
+    passages: [
+      "the happy little puppy likes to play with a ball in the garden",
+      "every day we eat sweet apples and drink cold milk after our lunch",
+      "my younger sister can jump very high and run really fast at school",
+    ],
+  },
+  {
+    id: "intermediate",
+    targetWpm: 20,
+    showKeyboard: true,
+    passages: [
+      "the quick brown fox runs over the lazy dog near the old farm gate",
+      "every morning the children walk together to the small village school",
+      "she loves to read a funny bedtime story before she goes to sleep",
+    ],
+  },
+  {
+    id: "advanced",
+    targetWpm: 28,
+    showKeyboard: false,
+    passages: [
+      "typing quickly takes practice every single day so try your best and keep going",
+      "the busy city street was full of cars buses and many people walking around",
+      "we packed our heavy bags and went on a long and happy summer holiday trip",
+    ],
+  },
+  {
+    id: "expert",
+    targetWpm: 38,
+    showKeyboard: false,
+    passages: [
+      "the more you practice your typing the faster your fingers will move across the keyboard without ever looking down at your hands",
+      "a really good typist keeps a smooth and steady rhythm and tries hard not to stop in the middle of a word or a sentence",
+      "with a lot of patience and daily practice almost anyone can learn to type both quickly and very accurately over time",
+    ],
+  },
+];
+
+export function getTier(id) {
+  return SPEED_TIERS.find((t) => t.id === id) || null;
+}
+
+export function tierIndex(id) {
+  return SPEED_TIERS.findIndex((t) => t.id === id);
+}
+
+export function nextTier(id) {
+  const i = tierIndex(id);
+  return i >= 0 && i < SPEED_TIERS.length - 1 ? SPEED_TIERS[i + 1] : null;
+}
