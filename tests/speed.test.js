@@ -2,10 +2,10 @@ import { test, assert, assertEqual } from "./harness.js";
 import { speedStars } from "../js/typing.js";
 import { SPEED_TIERS, getTier, tierIndex, nextTier } from "../js/speedlevels.js";
 
-test("there are 5 speed tiers with unique ids", () => {
-  assertEqual(SPEED_TIERS.length, 5);
+test("there are 6 speed tiers with unique ids", () => {
+  assertEqual(SPEED_TIERS.length, 6);
   const ids = SPEED_TIERS.map((t) => t.id);
-  assertEqual(new Set(ids).size, 5, "duplicate tier id");
+  assertEqual(new Set(ids).size, 6, "duplicate tier id");
 });
 
 test("tier target WPM strictly increases", () => {
@@ -18,11 +18,9 @@ test("tier target WPM strictly increases", () => {
 });
 
 test("keyboard guide shows for the first three tiers, hidden after", () => {
-  assertEqual(SPEED_TIERS[0].showKeyboard, true);
-  assertEqual(SPEED_TIERS[1].showKeyboard, true);
-  assertEqual(SPEED_TIERS[2].showKeyboard, true);
-  assertEqual(SPEED_TIERS[3].showKeyboard, false);
-  assertEqual(SPEED_TIERS[4].showKeyboard, false);
+  SPEED_TIERS.forEach((tier, i) => {
+    assertEqual(tier.showKeyboard, i < 3, `${tier.id} keyboard visibility`);
+  });
 });
 
 test("every passage is non-empty lowercase a–z + spaces only", () => {
@@ -39,7 +37,8 @@ test("getTier / tierIndex / nextTier navigate the tiers", () => {
   assertEqual(tierIndex("beginner"), 0);
   assertEqual(getTier("nope"), null);
   assertEqual(nextTier("beginner").id, "amateur");
-  assertEqual(nextTier("expert"), null);
+  assertEqual(nextTier("expert").id, "master");
+  assertEqual(nextTier("master"), null);
 });
 
 test("speedStars: reaching the target passes (2 stars), well above gives 3", () => {

@@ -105,6 +105,7 @@ export const STRINGS = {
     "speedtier.intermediate": "Intermediate",
     "speedtier.advanced": "Advanced",
     "speedtier.expert": "Expert",
+    "speedtier.master": "Master",
     "speed.target": "Target",
     "speed.best": "Best",
     "speed.wpm": "wpm",
@@ -120,6 +121,11 @@ export const STRINGS = {
     "speed.another": "Another test",
     "speed.allLevels": "All levels",
     "speed.finishedAll": "You mastered every speed level! 🏆",
+    "speedrec.amateur": "Next up: {name} ({wpm} wpm). A little faster now — try to look at the screen, not your fingers.",
+    "speedrec.intermediate": "Next up: {name} ({wpm} wpm). Longer sentences — keep a smooth, steady rhythm and don't rush.",
+    "speedrec.advanced": "Next up: {name} ({wpm} wpm). The keyboard guide turns OFF here — trust your fingers and don't look down!",
+    "speedrec.expert": "Next up: {name} ({wpm} wpm). Fast and tricky — stay relaxed and keep breathing.",
+    "speedrec.master": "Next up: {name} ({wpm} wpm). The final level, at full speed — you can do it! 🏆",
   },
 
   zh: {
@@ -211,6 +217,7 @@ export const STRINGS = {
     "speedtier.intermediate": "中级",
     "speedtier.advanced": "高级",
     "speedtier.expert": "专家",
+    "speedtier.master": "大师",
     "speed.target": "目标",
     "speed.best": "最佳",
     "speed.wpm": "词/分",
@@ -226,6 +233,11 @@ export const STRINGS = {
     "speed.another": "换一篇",
     "speed.allLevels": "所有等级",
     "speed.finishedAll": "你掌握了所有速度等级！🏆",
+    "speedrec.amateur": "接下来：{name}（{wpm} 词/分）。稍微快一点 — 看屏幕，不要看手指。",
+    "speedrec.intermediate": "接下来：{name}（{wpm} 词/分）。句子更长了 — 保持平稳的节奏，别着急。",
+    "speedrec.advanced": "接下来：{name}（{wpm} 词/分）。键盘提示会关闭 — 相信你的手指，别低头看！",
+    "speedrec.expert": "接下来：{name}（{wpm} 词/分）。又快又难 — 放松，保持呼吸。",
+    "speedrec.master": "接下来：{name}（{wpm} 词/分）。最后一关，全速前进 — 你可以的！🏆",
   },
 
   vi: {
@@ -317,6 +329,7 @@ export const STRINGS = {
     "speedtier.intermediate": "Trung cấp",
     "speedtier.advanced": "Nâng cao",
     "speedtier.expert": "Chuyên gia",
+    "speedtier.master": "Bậc thầy",
     "speed.target": "Mục tiêu",
     "speed.best": "Tốt nhất",
     "speed.wpm": "từ/phút",
@@ -332,6 +345,11 @@ export const STRINGS = {
     "speed.another": "Bài khác",
     "speed.allLevels": "Tất cả cấp độ",
     "speed.finishedAll": "Bạn đã thành thạo mọi cấp độ tốc độ! 🏆",
+    "speedrec.amateur": "Tiếp theo: {name} ({wpm} từ/phút). Nhanh hơn một chút — nhìn màn hình, đừng nhìn ngón tay.",
+    "speedrec.intermediate": "Tiếp theo: {name} ({wpm} từ/phút). Câu dài hơn — giữ nhịp đều và đừng vội.",
+    "speedrec.advanced": "Tiếp theo: {name} ({wpm} từ/phút). Bàn phím gợi ý sẽ tắt — tin vào ngón tay, đừng nhìn xuống!",
+    "speedrec.expert": "Tiếp theo: {name} ({wpm} từ/phút). Nhanh và khó — thư giãn và hít thở.",
+    "speedrec.master": "Tiếp theo: {name} ({wpm} từ/phút). Cấp cuối, tăng hết tốc — bạn làm được mà! 🏆",
   },
 };
 

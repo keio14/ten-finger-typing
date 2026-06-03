@@ -102,12 +102,17 @@ export function renderSpeed(app, id, passageIndex) {
     }
 
     const next = passed ? nextTier(tier.id) : null;
+    // After passing, recommend what the upcoming level is like.
+    const rec = next
+      ? t("speedrec." + next.id, { name: t("speedtier." + next.id), wpm: next.targetWpm })
+      : "";
     lineEl.insertAdjacentHTML(
       "afterend",
       `<div class="lesson-done">
         <h2>${"⭐".repeat(stars)}</h2>
         <p>${t("speed.yourSpeed")}: <b>${finalWpm}</b> ${t("speed.wpm")} · ${t("speed.accuracy")} ${accuracy}%</p>
         <p>${passed ? t("speed.passed") : t("speed.tooSlow", { target: tier.targetWpm })}</p>
+        ${rec ? `<p class="speed-rec">💡 ${rec}</p>` : ""}
         ${next ? `<a class="btn" href="#/speed/${next.id}">${t("speed.next")}</a>` : ""}
         ${passed && !next ? `<p>${t("speed.finishedAll")}</p>` : ""}
         <button class="btn-ghost" id="speed-another" type="button">${t("speed.another")}</button>
