@@ -145,7 +145,9 @@ export function renderSpeed(app, id, passageIndex) {
 
     if (!startedAt) startedAt = performance.now();
     const want = target[pos];
-    const got = e.key;
+    // Case-insensitive: some keyboards (e.g. iPad with Caps Lock / auto-shift)
+    // send capital letters, which would otherwise be marked wrong every time.
+    const got = e.key.toLowerCase();
     total++;
 
     if (got === want) {

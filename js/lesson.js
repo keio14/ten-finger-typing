@@ -122,7 +122,10 @@ export function renderLesson(app, id) {
 
     if (!startedAt) startedAt = performance.now();
     const want = expectedChar();
-    const got = e.key;
+    // Compare case-insensitively: the drill text is lowercase a–z, but some
+    // keyboards (e.g. iPad with Caps Lock or auto-shift) send capital letters,
+    // which would otherwise be counted as wrong on every keystroke.
+    const got = e.key.toLowerCase();
     total++;
 
     if (got === want) {
